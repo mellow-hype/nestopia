@@ -476,12 +476,19 @@ void nstsdl_input_match_joystick(Input::Controllers *controllers, SDL_Event even
 
 void nstsdl_input_conf_defaults() {
 	// Set default input config
+    // quicksave keys
+	inputconf.qsave1 = '1'; // F5
+	inputconf.qsave2 = '2'; // F6
+	inputconf.qsave3 = '3'; // F6
+	inputconf.qsave4 = '4'; // F6
 
-	inputconf.qsave1 = FL_F + 5;
-	inputconf.qsave2 = FL_F + 6;
-	inputconf.qload1 = FL_F + 7;
-	inputconf.qload2 = FL_F + 8;
-	inputconf.screenshot = FL_F + 9;
+    // quickload keys
+	inputconf.qload1 = FL_F + 6; // F6
+	inputconf.qload2 = FL_F + 7; // F7
+	inputconf.qload3 = FL_F + 8; // F8
+	inputconf.qload4 = FL_F + 9; // F9
+
+	inputconf.screenshot = FL_F + 10;
 	inputconf.fdsflip = FL_F + 3;
 	inputconf.fdsswitch = FL_F + 4;
 	inputconf.insertcoin1 = FL_F + 1;
@@ -730,8 +737,12 @@ void nstsdl_input_conf_write() {
 		fprintf(fp, "[ui]\n");
 		fprintf(fp, "qsave1=%d\n", inputconf.qsave1);
 		fprintf(fp, "qsave2=%d\n", inputconf.qsave2);
+		fprintf(fp, "qsave3=%d\n", inputconf.qsave3);
+		fprintf(fp, "qsave4=%d\n", inputconf.qsave4);
 		fprintf(fp, "qload1=%d\n", inputconf.qload1);
 		fprintf(fp, "qload2=%d\n", inputconf.qload2);
+		fprintf(fp, "qload3=%d\n", inputconf.qload3);
+		fprintf(fp, "qload4=%d\n", inputconf.qload4);
 		fprintf(fp, "screenshot=%d\n", inputconf.screenshot);
 		fprintf(fp, "fdsflip=%d\n", inputconf.fdsflip);
 		fprintf(fp, "fdsswitch=%d\n", inputconf.fdsswitch);
@@ -933,10 +944,18 @@ void fltkui_input_process_key(int e) {
 	if (e == FL_KEYDOWN) {
 		input.pressed = 1;
 		if (Fl::event_key() == '`') nst_timing_set_ffspeed();
+        // handle quick saves
 		else if (Fl::event_key() == inputconf.qsave1) nst_state_quicksave(0);
 		else if (Fl::event_key() == inputconf.qsave2) nst_state_quicksave(1);
+		else if (Fl::event_key() == inputconf.qsave3) nst_state_quicksave(2);
+		else if (Fl::event_key() == inputconf.qsave4) nst_state_quicksave(3);
+
+        // handle quick loads
 		else if (Fl::event_key() == inputconf.qload1) nst_state_quickload(0);
 		else if (Fl::event_key() == inputconf.qload2) nst_state_quickload(1);
+		else if (Fl::event_key() == inputconf.qload3) nst_state_quickload(2);
+		else if (Fl::event_key() == inputconf.qload4) nst_state_quickload(3);
+
 		else if (Fl::event_key() == inputconf.screenshot) { video_screenshot(NULL); }
 		else if (Fl::event_key() == inputconf.fdsflip) { nst_fds_flip(); }
 		else if (Fl::event_key() == inputconf.fdsswitch) { nst_fds_switch(); }

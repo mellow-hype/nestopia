@@ -38,10 +38,16 @@ typedef struct {
 
 typedef struct {
 	// User Interface
+    //
+    // hypr; additional quick save/load slots
 	int qsave1;
 	int qsave2;
+	int qsave3;
+	int qsave4;
 	int qload1;
 	int qload2;
+	int qload3;
+	int qload4;
 
 	int screenshot;
 
@@ -82,6 +88,7 @@ typedef struct {
 	char *js_p1ta;
 	char *js_p1tb;
 
+    // TODO; see how to remap these internally to have them trigger reset or load
 	char *js_rwstart;
 	char *js_rwstop;
 
