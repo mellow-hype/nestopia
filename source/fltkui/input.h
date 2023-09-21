@@ -32,6 +32,8 @@ typedef struct {
 	SDL_Event jtb;
 	SDL_Event rwstart;
 	SDL_Event rwstop;
+	SDL_Event qload1;
+	SDL_Event qsave1;
 	SDL_Event softreset;
 	SDL_Event hardreset;
 } gamepad_t;
@@ -88,9 +90,12 @@ typedef struct {
 	char *js_p1ta;
 	char *js_p1tb;
 
-    // TODO; see how to remap these internally to have them trigger reset or load
 	char *js_rwstart;
 	char *js_rwstop;
+
+    // hypr; joystick bind for quickload/save
+	char *js_qsave1;
+	char *js_qload1;
 
 	char *js_softreset;
 	char *js_hardreset;

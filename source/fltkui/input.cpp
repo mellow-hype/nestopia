@@ -351,6 +351,9 @@ void nstsdl_input_match_joystick(Input::Controllers *controllers, SDL_Event even
 	SDL_Event rw[2] = { player[0].rwstart, player[0].rwstop };
 	SDL_Event reset[2] = { player[0].softreset, player[0].hardreset };
 
+    // hypr; add events for quick state setting via joystick
+	SDL_Event qstate[2] = { player[0].qload1, player[0].qsave1 };
+
 	switch(event.type) {
 		// Handle button input
 		case SDL_JOYBUTTONUP:
@@ -371,6 +374,12 @@ void nstsdl_input_match_joystick(Input::Controllers *controllers, SDL_Event even
 			// Rewind
 			if (event.jbutton.button == rw[0].jbutton.button && event.jbutton.which == rw[0].jbutton.which) { nst_set_rewind(0); }
 			if (event.jbutton.button == rw[1].jbutton.button && event.jbutton.which == rw[1].jbutton.which) { nst_set_rewind(1); }
+
+            // hypr; add handling for quick save/load via joystick
+			if (event.jbutton.button == qstate[0].jbutton.button && event.jbutton.which == qstate[0].jbutton.which) { nst_state_quickload(0); }
+			if (event.jbutton.button == qstate[1].jbutton.button && event.jbutton.which == qstate[1].jbutton.which) { nst_state_quicksave(0); }
+
+            // reset
 			if (event.jbutton.button == reset[0].jbutton.button && event.jbutton.which == reset[0].jbutton.which) { nst_reset(0); }
 			if (event.jbutton.button == reset[1].jbutton.button && event.jbutton.which == reset[1].jbutton.which) { nst_reset(1); }
 			break;
@@ -477,16 +486,16 @@ void nstsdl_input_match_joystick(Input::Controllers *controllers, SDL_Event even
 void nstsdl_input_conf_defaults() {
 	// Set default input config
     // quicksave keys
-	inputconf.qsave1 = '1'; // F5
-	inputconf.qsave2 = '2'; // F6
-	inputconf.qsave3 = '3'; // F6
-	inputconf.qsave4 = '4'; // F6
+    inputconf.qsave1 = '1'; // F5
+    inputconf.qsave2 = '2'; // F6
+    inputconf.qsave3 = '3'; // F6
+    inputconf.qsave4 = '4'; // F6
 
     // quickload keys
-	inputconf.qload1 = FL_F + 6; // F6
-	inputconf.qload2 = FL_F + 7; // F7
-	inputconf.qload3 = FL_F + 8; // F8
-	inputconf.qload4 = FL_F + 9; // F9
+    inputconf.qload1 = FL_F + 6; // F6
+    inputconf.qload2 = FL_F + 7; // F7
+    inputconf.qload3 = FL_F + 8; // F8
+    inputconf.qload4 = FL_F + 9; // F9
 
 	inputconf.screenshot = FL_F + 10;
 	inputconf.fdsflip = FL_F + 3;
@@ -510,12 +519,15 @@ void nstsdl_input_conf_defaults() {
 	player[0].ta = 'x';
 	player[0].tb = 's';
 
+    // hypr; Mapping modified for 8BitDo SN30pro wired
 	player[0].ju = nstsdl_input_translate_string("j0h01");
 	player[0].jd = nstsdl_input_translate_string("j0h04");
 	player[0].jl = nstsdl_input_translate_string("j0h08");
 	player[0].jr = nstsdl_input_translate_string("j0h02");
-	player[0].jselect = nstsdl_input_translate_string("j0b8");
-	player[0].jstart = nstsdl_input_translate_string("j0b9");
+
+	player[0].jselect = nstsdl_input_translate_string("j0b6");
+	player[0].jstart = nstsdl_input_translate_string("j0b7");
+
 	player[0].ja = nstsdl_input_translate_string("j0b1");
 	player[0].jb = nstsdl_input_translate_string("j0b0");
 	player[0].jta = nstsdl_input_translate_string("j0b2");
@@ -523,6 +535,11 @@ void nstsdl_input_conf_defaults() {
 
 	player[0].rwstart = nstsdl_input_translate_string("j0b4");
 	player[0].rwstop = nstsdl_input_translate_string("j0b5");
+
+    // hypr; add qsave/load mappings for joystick clicks
+	player[0].qload1 = nstsdl_input_translate_string("j0b9");
+	player[0].qsave1 = nstsdl_input_translate_string("j0b10");
+
 	player[0].softreset = nstsdl_input_translate_string("j0b99");
 	player[0].hardreset = nstsdl_input_translate_string("j0b99");
 
@@ -590,8 +607,15 @@ static int nstsdl_input_config_match(void* user, const char* section, const char
 	// User Interface
 	if (MATCH("ui", "qsave1")) { pconfig->qsave1 = atoi(value); }
 	else if (MATCH("ui", "qsave2")) { pconfig->qsave2 = atoi(value); }
+    // hypr; add qsave slots
+	else if (MATCH("ui", "qsave3")) { pconfig->qsave3 = atoi(value); }
+	else if (MATCH("ui", "qsave4")) { pconfig->qsave4 = atoi(value); }
+
 	else if (MATCH("ui", "qload1")) { pconfig->qload1 = atoi(value); }
 	else if (MATCH("ui", "qload2")) { pconfig->qload2 = atoi(value); }
+    // hypr; add qload slots
+	else if (MATCH("ui", "qload3")) { pconfig->qload3 = atoi(value); }
+	else if (MATCH("ui", "qload4")) { pconfig->qload4 = atoi(value); }
 
 	else if (MATCH("ui", "screenshot")) { pconfig->screenshot = atoi(value); }
 
@@ -634,6 +658,10 @@ static int nstsdl_input_config_match(void* user, const char* section, const char
 
 	else if (MATCH("gamepad1", "js_rwstart")) { pconfig->js_rwstart = strdup(value); }
 	else if (MATCH("gamepad1", "js_rwstop")) { pconfig->js_rwstop = strdup(value); }
+
+    // hypr; quick save/load tweak
+	else if (MATCH("gamepad1", "js_qload1")) { pconfig->js_qload1 = strdup(value); }
+	else if (MATCH("gamepad1", "js_qsave1")) { pconfig->js_qsave1 = strdup(value); }
 
 	else if (MATCH("gamepad1", "js_softreset")) { pconfig->js_softreset = strdup(value); }
 	else if (MATCH("gamepad1", "js_hardreset")) { pconfig->js_hardreset = strdup(value); }
@@ -697,6 +725,10 @@ void nstsdl_input_conf_read() {
 
 		if (inputconf.js_rwstart) { player[0].rwstart = nstsdl_input_translate_string(inputconf.js_rwstart); }
 		if (inputconf.js_rwstop) { player[0].rwstop = nstsdl_input_translate_string(inputconf.js_rwstop); }
+
+        // hypr; quick save/load tweak
+		if (inputconf.js_qsave1) { player[0].qsave1 = nstsdl_input_translate_string(inputconf.js_qsave1); }
+		if (inputconf.js_qload1) { player[0].qload1 = nstsdl_input_translate_string(inputconf.js_qload1); }
 
 		if (inputconf.js_softreset) { player[0].softreset = nstsdl_input_translate_string(inputconf.js_softreset); }
 		if (inputconf.js_hardreset) { player[0].hardreset = nstsdl_input_translate_string(inputconf.js_hardreset); }
@@ -780,6 +812,11 @@ void nstsdl_input_conf_write() {
 
 		fprintf(fp, "js_rwstart=%s\n", nstsdl_input_translate_event(player[0].rwstart));
 		fprintf(fp, "js_rwstop=%s\n", nstsdl_input_translate_event(player[0].rwstop));
+
+        // hypr; quick save/load
+		fprintf(fp, "js_qsave1=%s\n", nstsdl_input_translate_event(player[0].qsave1));
+		fprintf(fp, "js_qload1=%s\n", nstsdl_input_translate_event(player[0].qload1));
+
 		fprintf(fp, "js_softreset=%s\n", nstsdl_input_translate_event(player[0].softreset));
 		fprintf(fp, "js_hardreset=%s\n", nstsdl_input_translate_event(player[0].hardreset));
 		fprintf(fp, "\n"); // End of Section
@@ -964,6 +1001,7 @@ void fltkui_input_process_key(int e) {
 		else if (Fl::event_key() == inputconf.reset) { nst_reset(0); }
 		else if (Fl::event_key() == inputconf.rwstart) { nst_set_rewind(0); }
 		else if (Fl::event_key() == inputconf.rwstop) { nst_set_rewind(1); }
+
 		else if (Fl::event_key() == ' ') { cNstPads->pad[1].mic = 0x04; }
 	}
 	else {
