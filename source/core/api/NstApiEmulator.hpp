@@ -25,6 +25,8 @@
 #ifndef NST_API_EMULATOR_H
 #define NST_API_EMULATOR_H
 
+#include "vector"
+
 #ifndef NST_BASE_H
 #include "../NstBase.hpp"
 #endif
@@ -37,6 +39,8 @@
 #pragma warning( push )
 #endif
 
+
+typedef unsigned long long time_ms ;
 
 namespace Nes
 {
@@ -52,12 +56,15 @@ namespace Nes
                 void startTimer();
                 void stopTimer();
                 void Reset();
-                unsigned long long lastSplit();
+                time_ms duration();
+                time_ms lastSplit();
             private:
                 bool timerActive;
-                unsigned long long startTime;
-                unsigned long long stopTime;
+                time_ms startTime;
+                time_ms stopTime;
+                std::vector<time_ms> splits;
         };
+
         class Machine;
 
         namespace Video

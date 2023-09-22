@@ -47,29 +47,38 @@ namespace Nes
             }
         }
 
+        // check Timer status
         bool SplitTimer::isTimerRunning() {
             return timerActive;
         }
 
+        // Reset the timer
         void SplitTimer::Reset() {
             timerActive = false;
             startTime = 0;
             stopTime = 0;
         }
 
+        // start the timer
         void SplitTimer::startTimer() {
             timerActive = true;
             startTime = timeSinceEpochMillisec();
         }
 
+        // stop the timer
         void SplitTimer::stopTimer() {
             stopTime = timeSinceEpochMillisec();
             timerActive = false;
+            splits.push_back(duration());
         }
 
-        unsigned long long SplitTimer::lastSplit() {
-            return stopTime - startTime;
+        time_ms SplitTimer::lastSplit() {
+            return splits.back();
         };
+
+        time_ms SplitTimer::duration() {
+            return stopTime - startTime;
+        }
     }
 
 }
@@ -77,40 +86,40 @@ namespace Nes
 
 namespace Nes
 {
-	namespace Api
-	{
-		#ifdef NST_MSVC_OPTIMIZE
-		#pragma optimize("s", on)
-		#endif
+    namespace Api
+    {
+        #ifdef NST_MSVC_OPTIMIZE
+        #pragma optimize("s", on)
+        #endif
 
-		Emulator::Emulator()
-		: machine(*new Core::Machine),
+        Emulator::Emulator()
+        : machine(*new Core::Machine),
         timer()
-		{
-		}
+        {
+        }
 
-		Emulator::~Emulator() throw()
-		{
-			delete &machine;
-		}
+        Emulator::~Emulator() throw()
+        {
+            delete &machine;
+        }
 
-		#ifdef NST_MSVC_OPTIMIZE
-		#pragma optimize("", on)
-		#endif
+        #ifdef NST_MSVC_OPTIMIZE
+        #pragma optimize("", on)
+        #endif
 
-		Result Emulator::Execute
-		(
-			Core::Video::Output* video,
-			Core::Sound::Output* sound,
-			Core::Input::Controllers* input
-		)   throw()
-		{
-			return machine.tracker.Execute( machine, video, sound, input );
-		}
+        Result Emulator::Execute
+        (
+            Core::Video::Output* video,
+            Core::Sound::Output* sound,
+            Core::Input::Controllers* input
+        )   throw()
+        {
+            return machine.tracker.Execute( machine, video, sound, input );
+        }
 
-		ulong Emulator::Frame() const throw()
-		{
-			return machine.tracker.Frame();
-		}
-	}
+        ulong Emulator::Frame() const throw()
+        {
+            return machine.tracker.Frame();
+        }
+    }
 }
