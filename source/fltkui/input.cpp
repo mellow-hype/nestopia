@@ -353,6 +353,8 @@ void nstsdl_input_match_joystick(Input::Controllers *controllers, SDL_Event even
 
     // hypr; add events for quick state setting via joystick
     SDL_Event qstate[2] = { player[0].qload1, player[0].qsave1 };
+    // hypr; toggle embedded timer
+    SDL_Event timer[1] = { player[0].timertoggle };
 
     switch(event.type) {
         // Handle button input
@@ -375,9 +377,19 @@ void nstsdl_input_match_joystick(Input::Controllers *controllers, SDL_Event even
             if (event.jbutton.button == rw[0].jbutton.button && event.jbutton.which == rw[0].jbutton.which) { nst_set_rewind(0); }
             if (event.jbutton.button == rw[1].jbutton.button && event.jbutton.which == rw[1].jbutton.which) { nst_set_rewind(1); }
 
-            // hypr; add handling for quick save/load via joystick
-            if (event.jbutton.button == qstate[0].jbutton.button && event.jbutton.which == qstate[0].jbutton.which) { nst_state_quickload(0); }
-            if (event.jbutton.button == qstate[1].jbutton.button && event.jbutton.which == qstate[1].jbutton.which) { nst_state_quicksave(0); }
+            // hypr; handle toggling the timer from a joystick/gamepad
+            if (event.jbutton.button == timer[0].jbutton.button && event.jbutton.which == timer[0].jbutton.which) {
+                nst_toggle_timer();
+            }
+
+            // hypr; add handling for quick load
+            if (event.jbutton.button == qstate[0].jbutton.button && event.jbutton.which == qstate[0].jbutton.which) {
+                nst_state_quickload(0);
+            }
+            // hypr; add handling for quick save
+            if (event.jbutton.button == qstate[1].jbutton.button && event.jbutton.which == qstate[1].jbutton.which) {
+                nst_state_quicksave(0);
+            }
 
             // reset
             if (event.jbutton.button == reset[0].jbutton.button && event.jbutton.which == reset[0].jbutton.which) { nst_reset(0); }
@@ -486,16 +498,19 @@ void nstsdl_input_match_joystick(Input::Controllers *controllers, SDL_Event even
 void nstsdl_input_conf_defaults() {
     // Set default input config
     // quicksave keys
-    inputconf.qsave1 = '1'; // F5
-    inputconf.qsave2 = '2'; // F6
-    inputconf.qsave3 = '3'; // F6
-    inputconf.qsave4 = '4'; // F6
+    inputconf.qsave1 = '1';
+    inputconf.qsave2 = '2';
+    inputconf.qsave3 = '3';
+    inputconf.qsave4 = '4';
 
     // quickload keys
     inputconf.qload1 = FL_F + 6; // F6
     inputconf.qload2 = FL_F + 7; // F7
     inputconf.qload3 = FL_F + 8; // F8
     inputconf.qload4 = FL_F + 9; // F9
+
+    // toggle split timer
+    inputconf.timertoggle = 't';
 
     inputconf.screenshot = FL_F + 10;
     inputconf.fdsflip = FL_F + 3;
@@ -518,6 +533,7 @@ void nstsdl_input_conf_defaults() {
     player[0].b = 'a';
     player[0].ta = 'x';
     player[0].tb = 's';
+    player[0].tb = 's';
 
     // hypr; Mapping modified for 8BitDo SN30pro wired
     player[0].ju = nstsdl_input_translate_string("j0h01");
@@ -539,6 +555,9 @@ void nstsdl_input_conf_defaults() {
     // hypr; add qsave/load mappings for joystick clicks
     player[0].qload1 = nstsdl_input_translate_string("j0b9");
     player[0].qsave1 = nstsdl_input_translate_string("j0b10");
+
+    // hypr; GAMEPAD timer toggle w/ special right-side button on sn30
+    player[0].timertoggle = nstsdl_input_translate_string("j0b8");
 
     player[0].softreset = nstsdl_input_translate_string("j0b99");
     player[0].hardreset = nstsdl_input_translate_string("j0b99");
@@ -630,6 +649,7 @@ static int nstsdl_input_config_match(void* user, const char* section, const char
     else if (MATCH("ui", "ffspeed")) { pconfig->ffspeed = atoi(value); }
     else if (MATCH("ui", "rwstart")) { pconfig->rwstart = atoi(value); }
     else if (MATCH("ui", "rwstop")) { pconfig->rwstop = atoi(value); }
+    else if (MATCH("ui", "timertoggle")) { pconfig->timertoggle = atoi(value); }
 
     else if (MATCH("ui", "fullscreen")) { pconfig->fullscreen = atoi(value); }
 
@@ -659,6 +679,8 @@ static int nstsdl_input_config_match(void* user, const char* section, const char
     else if (MATCH("gamepad1", "js_rwstart")) { pconfig->js_rwstart = strdup(value); }
     else if (MATCH("gamepad1", "js_rwstop")) { pconfig->js_rwstop = strdup(value); }
 
+    // hypr; GAMEPAD timer toggle
+    else if (MATCH("gamepad1", "js_timer")) { pconfig->js_timer = strdup(value); }
     // hypr; quick save/load tweak
     else if (MATCH("gamepad1", "js_qload1")) { pconfig->js_qload1 = strdup(value); }
     else if (MATCH("gamepad1", "js_qsave1")) { pconfig->js_qsave1 = strdup(value); }
@@ -726,12 +748,15 @@ void nstsdl_input_conf_read() {
         if (inputconf.js_rwstart) { player[0].rwstart = nstsdl_input_translate_string(inputconf.js_rwstart); }
         if (inputconf.js_rwstop) { player[0].rwstop = nstsdl_input_translate_string(inputconf.js_rwstop); }
 
+        if (inputconf.js_softreset) { player[0].softreset = nstsdl_input_translate_string(inputconf.js_softreset); }
+        if (inputconf.js_hardreset) { player[0].hardreset = nstsdl_input_translate_string(inputconf.js_hardreset); }
+
         // hypr; quick save/load tweak
         if (inputconf.js_qsave1) { player[0].qsave1 = nstsdl_input_translate_string(inputconf.js_qsave1); }
         if (inputconf.js_qload1) { player[0].qload1 = nstsdl_input_translate_string(inputconf.js_qload1); }
 
-        if (inputconf.js_softreset) { player[0].softreset = nstsdl_input_translate_string(inputconf.js_softreset); }
-        if (inputconf.js_hardreset) { player[0].hardreset = nstsdl_input_translate_string(inputconf.js_hardreset); }
+        // hypr; GAMEPAD timer toggle
+        if (inputconf.js_timer) { player[0].timertoggle = nstsdl_input_translate_string(inputconf.js_timer); }
 
         // Player 2
         player[1].u = inputconf.kb_p2u;
@@ -785,6 +810,8 @@ void nstsdl_input_conf_write() {
         fprintf(fp, "rwstart=%d\n", inputconf.rwstart);
         fprintf(fp, "rwstop=%d\n", inputconf.rwstop);
         fprintf(fp, "fullscreen=%d\n", inputconf.fullscreen);
+        // hypr; KEYBOARD timer toggle
+        fprintf(fp, "timertoggle=%d\n", inputconf.timertoggle);
         fprintf(fp, "\n"); // End of Section
 
         fprintf(fp, "[gamepad1]\n");
@@ -812,6 +839,9 @@ void nstsdl_input_conf_write() {
 
         fprintf(fp, "js_rwstart=%s\n", nstsdl_input_translate_event(player[0].rwstart));
         fprintf(fp, "js_rwstop=%s\n", nstsdl_input_translate_event(player[0].rwstop));
+
+        // hypr; GAMEPAD timer toggle
+        fprintf(fp, "js_timer=%s\n", nstsdl_input_translate_event(player[0].timertoggle));
 
         // hypr; quick save/load
         fprintf(fp, "js_qsave1=%s\n", nstsdl_input_translate_event(player[0].qsave1));
@@ -992,6 +1022,9 @@ void fltkui_input_process_key(int e) {
         else if (Fl::event_key() == inputconf.qload2) nst_state_quickload(1);
         else if (Fl::event_key() == inputconf.qload3) nst_state_quickload(2);
         else if (Fl::event_key() == inputconf.qload4) nst_state_quickload(3);
+
+        // hypr; KEYBOARD toggle the split timer
+        else if (Fl::event_key() == inputconf.timertoggle) nst_toggle_timer();
 
         else if (Fl::event_key() == inputconf.screenshot) { video_screenshot(NULL); }
         else if (Fl::event_key() == inputconf.fdsflip) { nst_fds_flip(); }

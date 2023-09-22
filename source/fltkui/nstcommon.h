@@ -86,6 +86,10 @@ void nst_set_paths(const char *filename);
 void nst_set_region();
 void nst_set_rewind(int direction);
 
+void nst_start_emutimer();
+void nst_stop_emutimer();
+void nst_toggle_timer();
+
 // States
 void nst_state_save(const char *filename);
 void nst_state_load(const char *filename);

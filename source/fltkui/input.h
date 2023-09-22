@@ -32,6 +32,7 @@ typedef struct {
 	SDL_Event jtb;
 	SDL_Event rwstart;
 	SDL_Event rwstop;
+	SDL_Event timertoggle;
 	SDL_Event qload1;
 	SDL_Event qsave1;
 	SDL_Event softreset;
@@ -50,6 +51,7 @@ typedef struct {
 	int qload2;
 	int qload3;
 	int qload4;
+	int timertoggle;
 
 	int screenshot;
 
@@ -96,6 +98,7 @@ typedef struct {
     // hypr; joystick bind for quickload/save
 	char *js_qsave1;
 	char *js_qload1;
+	char *js_timer;
 
 	char *js_softreset;
 	char *js_hardreset;

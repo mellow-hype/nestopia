@@ -759,6 +759,30 @@ void nst_set_rewind(int direction) {
 	}
 }
 
+void nst_start_emutimer() {
+    emulator.timer.startTimer();
+    fprintf(stderr, "Started split timer\n");
+    nst_video_print("Started timer", 8, 212, 2, true);
+}
+
+void nst_stop_emutimer() {
+    emulator.timer.stopTimer();
+    unsigned long long split_ms = emulator.timer.lastSplit();
+    fprintf(stderr, "Stopped split timer, split: %llu\n", split_ms);
+
+    char msg[256] = {0};
+    sprintf(msg, "Split: %llu ms", split_ms);
+    nst_video_print(msg, 8, 212, 2, true);
+}
+
+void nst_toggle_timer() {
+    if (emulator.timer.isTimerRunning()) {
+        nst_stop_emutimer();
+    } else {
+        nst_start_emutimer();
+    }
+}
+
 void nst_state_save(const char *filename) {
 	// Save a state by filename
 	Machine machine(emulator);

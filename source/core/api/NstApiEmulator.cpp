@@ -22,8 +22,58 @@
 //
 ////////////////////////////////////////////////////////////////////////////////////////
 
+#include "chrono"
 #include "../NstMachine.hpp"
 #include "NstApiEmulator.hpp"
+
+unsigned long long timeSinceEpochMillisec() {
+  using namespace std::chrono;
+  return duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
+}
+
+namespace Nes
+{
+    namespace Core
+    {
+        SplitTimer::SplitTimer():
+            timerActive (false),
+            startTime (0),
+            stopTime (0)
+        {}
+
+        SplitTimer::~SplitTimer() {
+            if (timerActive) {
+                stopTimer();
+            }
+        }
+
+        bool SplitTimer::isTimerRunning() {
+            return timerActive;
+        }
+
+        void SplitTimer::Reset() {
+            timerActive = false;
+            startTime = 0;
+            stopTime = 0;
+        }
+
+        void SplitTimer::startTimer() {
+            timerActive = true;
+            startTime = timeSinceEpochMillisec();
+        }
+
+        void SplitTimer::stopTimer() {
+            stopTime = timeSinceEpochMillisec();
+            timerActive = false;
+        }
+
+        unsigned long long SplitTimer::lastSplit() {
+            return stopTime - startTime;
+        };
+    }
+
+}
+
 
 namespace Nes
 {
@@ -34,7 +84,8 @@ namespace Nes
 		#endif
 
 		Emulator::Emulator()
-		: machine(*new Core::Machine)
+		: machine(*new Core::Machine),
+        timer()
 		{
 		}
 

@@ -35,6 +35,7 @@
 #include "api/NstApiMachine.hpp"
 #include "api/NstApiUser.hpp"
 
+
 namespace Nes
 {
 	namespace Core
@@ -151,6 +152,7 @@ namespace Nes
 			const Result result = PowerOff();
 
 			tracker.Unload();
+
 
 			Image::Unload( image );
 			image = NULL;

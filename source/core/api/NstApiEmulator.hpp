@@ -37,74 +37,92 @@
 #pragma warning( push )
 #endif
 
+
 namespace Nes
 {
-	namespace Core
-	{
-		class Machine;
+    namespace Core
+    {
+        class SplitTimer
+        {
+            public:
+                SplitTimer();
+                ~SplitTimer();
 
-		namespace Video
-		{
-			class Output;
-		}
+                bool isTimerRunning();
+                void startTimer();
+                void stopTimer();
+                void Reset();
+                unsigned long long lastSplit();
+            private:
+                bool timerActive;
+                unsigned long long startTime;
+                unsigned long long stopTime;
+        };
+        class Machine;
 
-		namespace Sound
-		{
-			class Output;
-		}
+        namespace Video
+        {
+            class Output;
+        }
 
-		namespace Input
-		{
-			class Controllers;
-		}
-	}
+        namespace Sound
+        {
+            class Output;
+        }
 
-	namespace Api
-	{
-		/**
-		* Emulator object instance.
-		*/
-		class Emulator
-		{
-		public:
+        namespace Input
+        {
+            class Controllers;
+        }
+    }
 
-			Emulator();
-			~Emulator() throw();
+    namespace Api
+    {
+        /**
+        * Emulator object instance.
+        */
+        class Emulator
+        {
+        public:
 
-			/**
-			* Executes one frame.
-			*
-			* @param video video context object or NULL to skip output
-			* @param sound sound context object or NULL to skip output
-			* @param input input context object or NULL to skip output
-			* @return result code
-			*/
-			Result Execute
-			(
-				Core::Video::Output* video,
-				Core::Sound::Output* sound,
-				Core::Input::Controllers* input
-			)   throw();
+            Emulator();
+            ~Emulator() throw();
 
-			/**
-			* Returns the number of executed frames relative to the last machine power/reset.
-			*
-			* @return number
-			*/
-			ulong Frame() const throw();
+            /**
+            * Executes one frame.
+            *
+            * @param video video context object or NULL to skip output
+            * @param sound sound context object or NULL to skip output
+            * @param input input context object or NULL to skip output
+            * @return result code
+            */
+            Result Execute
+            (
+                Core::Video::Output* video,
+                Core::Sound::Output* sound,
+                Core::Input::Controllers* input
+            )   throw();
 
-		private:
+            /**
+            * Returns the number of executed frames relative to the last machine power/reset.
+            *
+            * @return number
+            */
+            ulong Frame() const throw();
 
-			Core::Machine& machine;
+        private:
 
-		public:
+            Core::Machine& machine;
 
-			operator Core::Machine& ()
-			{
-				return machine;
-			}
-		};
-	}
+        public:
+
+            Core::SplitTimer timer;
+            operator Core::Machine& ()
+            {
+                return machine;
+            }
+        };
+    }
 }
 
 #if NST_MSVC >= 1200
