@@ -793,6 +793,10 @@ void nst_toggle_timer() {
 
 
 void nst_state_save(const char *filename) {
+    // hypr; Reset the split timer before saving state; i.e. all loads will start
+    // with a clean SplitTimer
+    emulator.timer.Reset();
+
     // Save a state by filename
     Machine machine(emulator);
 
@@ -853,6 +857,7 @@ void nst_timing_set_default() {
 
 void nst_reset(bool hardreset) {
     // Reset the machine (soft or hard)
+    emulator.timer.Reset();
     Machine machine(emulator);
     Fds fds(emulator);
     machine.SetRamPowerState(conf.misc_power_state);
@@ -881,6 +886,10 @@ void nst_emuloop() {
 }
 
 void nst_unload() {
+    if (emulator.timer.isTimerRunning()) {
+        emulator.timer.Reset();
+    }
+
     // Remove the cartridge and shut down the NES
     Machine machine(emulator);
 
@@ -1030,6 +1039,9 @@ int nst_load(const char *filename) {
 
     // Power on
     machine.Power(true);
+
+    // Reset the emulator's split timer if it was already in use
+    emulator.timer.Reset();
 
     loaded = 1;
     return loaded;

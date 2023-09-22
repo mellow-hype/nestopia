@@ -57,6 +57,7 @@ namespace Nes
             timerActive = false;
             startTime = 0;
             stopTime = 0;
+            splits.clear();
         }
 
         // start the timer
