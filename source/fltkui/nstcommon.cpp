@@ -795,7 +795,7 @@ void nst_toggle_timer() {
 void nst_state_save(const char *filename) {
     // hypr; Reset the split timer before saving state; i.e. all loads will start
     // with a clean SplitTimer
-    emulator.timer.Reset();
+    // emulator.timer.Reset();
 
     // Save a state by filename
     Machine machine(emulator);
@@ -821,9 +821,15 @@ void nst_state_load(const char *filename) {
 void nst_state_quicksave(int slot) {
     // Quick Save State
     if (!loaded) { return; }
+    char msg[256] = {0};
+    sprintf(msg, "QuickSAVE slot%d", slot);
+    fprintf(stderr, "%s\n", msg);
+
     char slotpath[520];
     snprintf(slotpath, sizeof(slotpath), "%s_%d.nst", nstpaths.statepath, slot);
     nst_state_save(slotpath);
+
+    nst_video_print(msg, 8, 212, 2, true);
 }
 
 
@@ -839,8 +845,13 @@ void nst_state_quickload(int slot) {
         nst_video_print("No State to Load", 8, 212, 2, true);
         return;
     }
+    char msg[256] = {0};
+    sprintf(msg, "QuickLOAD slot%d", slot);
+    fprintf(stderr, "%s\n", msg);
 
     nst_state_load(slotpath);
+
+    nst_video_print(msg, 8, 212, 2, true);
 }
 
 void nst_timing_set_ffspeed() {

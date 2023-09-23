@@ -19,6 +19,8 @@ typedef struct {
 	int b;
 	int ta;
 	int tb;
+	bool slayer_active;
+	bool llayer_active;
 
 	SDL_Event ju;
 	SDL_Event jd;

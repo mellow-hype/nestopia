@@ -361,17 +361,40 @@ void nstsdl_input_match_joystick(Input::Controllers *controllers, SDL_Event even
         case SDL_JOYBUTTONUP:
         case SDL_JOYBUTTONDOWN:
             // Gamepad input
-            for (j = 0; j < TOTALBUTTONS; j++) {
-                if (buttons[j].jbutton.button == event.jbutton.button
-                    && buttons[j].jbutton.which == event.jbutton.which) {
-                    input.nescode = nescodes[j];
-                    if (j >= NUMBUTTONS) { input.player = 1; }
-                    // This is really dirty
-                    if (j == 8 || j == 18) { input.turboa = 1; }
-                    if (j == 9 || j == 19) { input.turbob = 1; }
+            if (!player[0].slayer_active && !player[0].llayer_active) {
+                for (j = 0; j < TOTALBUTTONS; j++) {
+                    if (buttons[j].jbutton.button == event.jbutton.button
+                        && buttons[j].jbutton.which == event.jbutton.which) {
+                        input.nescode = nescodes[j];
+                        if (j >= NUMBUTTONS) { input.player = 1; }
+                        // This is really dirty
+                        if (j == 8 || j == 18) { input.turboa = 1; }
+                        if (j == 9 || j == 19) { input.turbob = 1; }
+                    }
+                }
+                input.pressed = event.jbutton.state;
+            } else {
+                // handle special controller layer
+                // only buttons A, B, X, Y are mapped when a layer is turned on
+                unsigned int LAYER_BUTTONS_COUNT = 4;
+                SDL_Event buttons[LAYER_BUTTONS_COUNT] = {
+                    player[0].jtb, player[0].ja, player[0].jb, player[0].jta,
+                };
+
+                // Handle special save/load layer
+                for (j = 0; j < LAYER_BUTTONS_COUNT; j++) {
+                    if (buttons[j].jbutton.button == event.jbutton.button
+                        && buttons[j].jbutton.which == event.jbutton.which) {
+                        if (player[0].slayer_active) {
+                            player[0].slayer_active = false;
+                            nst_state_quicksave(j);
+                        } else if (player[0].llayer_active) {
+                            player[0].llayer_active = false;
+                            nst_state_quickload(j);
+                        }
+                    }
                 }
             }
-            input.pressed = event.jbutton.state;
 
             // Rewind
             if (event.jbutton.button == rw[0].jbutton.button && event.jbutton.which == rw[0].jbutton.which) { nst_set_rewind(0); }
@@ -379,16 +402,24 @@ void nstsdl_input_match_joystick(Input::Controllers *controllers, SDL_Event even
 
             // hypr; handle toggling the timer from a joystick/gamepad
             if (event.jbutton.button == timer[0].jbutton.button && event.jbutton.which == timer[0].jbutton.which) {
-                nst_toggle_timer();
+                // only do so on button up to avoid a repeated signal
+                if (event.type == SDL_JOYBUTTONUP) {
+                    nst_toggle_timer();
+                }
             }
 
             // hypr; add handling for quick load
             if (event.jbutton.button == qstate[0].jbutton.button && event.jbutton.which == qstate[0].jbutton.which) {
-                nst_state_quickload(0);
+                // test: have this input set the controller layer toggle
+                if (event.type == SDL_JOYBUTTONUP) {
+                    player[0].slayer_active = player[0].slayer_active == true ? false: true;
+                }
             }
             // hypr; add handling for quick save
             if (event.jbutton.button == qstate[1].jbutton.button && event.jbutton.which == qstate[1].jbutton.which) {
-                nst_state_quicksave(0);
+                if (event.type == SDL_JOYBUTTONUP) {
+                    player[0].llayer_active = player[0].llayer_active == true ? false: true;
+                }
             }
 
             // reset
@@ -549,6 +580,7 @@ void nstsdl_input_conf_defaults() {
     player[0].jta = nstsdl_input_translate_string("j0b2");
     player[0].jtb = nstsdl_input_translate_string("j0b3");
 
+    // L+R triggers
     player[0].rwstart = nstsdl_input_translate_string("j0b4");
     player[0].rwstop = nstsdl_input_translate_string("j0b5");
 
