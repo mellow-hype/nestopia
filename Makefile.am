@@ -211,6 +211,8 @@ nestopia_SOURCES = \
 	source/core/api/NstApiInput.cpp \
 	source/core/api/NstApiSound.cpp \
 	source/core/api/NstApiSound.hpp \
+	source/core/api/NstApiSplitTimer.cpp \
+	source/core/api/NstApiSplitTimer.hpp \
 	source/core/api/NstApiDipSwitches.hpp \
 	source/core/api/NstApiCartridge.hpp \
 	source/core/NstCartridgeUnif.hpp \
@@ -729,6 +731,8 @@ nestopia_SOURCES += \
 	source/fltkui/fltkui_archive.cpp \
 	source/fltkui/fltkui_cheats.h \
 	source/fltkui/fltkui_cheats.cpp \
+	source/fltkui/fltkui_stimer.h \
+	source/fltkui/fltkui_stimer.cpp \
 	source/fltkui/fltkui.cpp \
 	source/fltkui/fltkui.h \
 	source/fltkui/fltkui_config.cpp
