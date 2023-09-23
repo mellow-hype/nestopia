@@ -5,7 +5,10 @@ from.
 
 ## TODO
 
-- [] find a good way to display split times on-screen
+- [ ] find a good way to display more split times on-screen
+- [ ] write split times from current session to file at close/unload/reset
+- [ ] expand config options reachable via GUI
+- [ ] more user-friendly key-remapping interface for custom features
 
 ## Features
 ### Additional Quick Save/Load Slot Keyboard Hotkeys
