@@ -5,7 +5,7 @@ from.
 
 ## TODO
 
-- [ ] find a good way to display more split times on-screen
+- [x] find a good way to display more split times on-screen
 - [ ] write split times from current session to file at close/unload/reset
 - [ ] expand config options reachable via GUI
 - [ ] more user-friendly key-remapping interface for custom features
@@ -61,7 +61,7 @@ be toggled on and off, and each time it is toggled off the split time is calcula
 start time and displayed in a message on-screen. The split values are also saved to a vector in the
 `SplitTimer` object.
 
-## Controls
+### Controls
 
 A toggle control has been created for both keyboard and joystick/gamepad. To use the timer, hit
 the toggle once to start and then again to stop it and calculate the split time.
@@ -72,6 +72,14 @@ _NOTE: the timer doesn't automatically continue so in order to start a new split
 Keyboard = 't'
 Gamepad = 'Special bottom right'
 ```
+
+### Splits GUI
+
+A basic GUI view is available to display all splits recorded during a session. It can be found in
+the menubar under _Tools>Time Splits_ (or with `Alt-w`).
+
+![split](splitwin.png)
+
 
 ## Reference: Controller Mapping: 8BitDo SN30Pro
 
