@@ -26,6 +26,7 @@
 #define NST_API_EMULATOR_H
 
 #include "vector"
+#include "NstApiSplitTimer.hpp"
 
 #ifndef NST_BASE_H
 #include "../NstBase.hpp"
@@ -46,26 +47,6 @@ namespace Nes
 {
     namespace Core
     {
-        class SplitTimer
-        {
-            public:
-                SplitTimer();
-                ~SplitTimer();
-
-                bool isTimerRunning();
-                void startTimer();
-                void stopTimer();
-                void Reset();
-                time_ms duration();
-                time_ms lastSplit();
-                std::vector<time_ms>* getSplits();
-            private:
-                bool timerActive;
-                time_ms startTime;
-                time_ms stopTime;
-                std::vector<time_ms> splits;
-        };
-
         class Machine;
 
         namespace Video
@@ -124,7 +105,7 @@ namespace Nes
 
         public:
 
-            Core::SplitTimer timer;
+            Nes::Api::SplitTimer timer;
             operator Core::Machine& ()
             {
                 return machine;

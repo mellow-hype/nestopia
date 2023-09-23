@@ -773,10 +773,10 @@ void nst_stop_stimer() {
     fprintf(stderr, "Stopped timer\n");
 
     // calculate split in seconds
-    char msg[256] = {0};
-    unsigned long long split_ms = emulator.timer.lastSplit();
-    float secs = ((float)split_ms) / 1000.00;
-    sprintf(msg, "Split: %.3f secs", secs);
+    char msg[128] = {0};
+    time_ms split_ms = emulator.timer.lastSplit();
+    std::string ts = format_split_ms_string(split_ms);
+    sprintf(msg, "Split: %s", ts.c_str());
 
     fprintf(stderr, "%s\n", msg);
     nst_video_print(msg, 8, 212, 2, true);
