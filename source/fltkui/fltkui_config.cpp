@@ -663,40 +663,40 @@ void NstConfWindow::populate() {
 }
 
 
-void NstTimerSplitWindow::populate() {
-	split_count = 0;
-	buff = new Fl_Text_Buffer();
-	disp = new Fl_Text_Display(20, 20, 400-40, 400-60, "Splits");
-	disp->buffer(buff);
+// void NstTimerSplitWindow::populate() {
+// 	split_count = 0;
+// 	buff = new Fl_Text_Buffer();
+// 	disp = new Fl_Text_Display(20, 20, 400-40, 400-60, "Splits");
+// 	disp->buffer(buff);
 
-	Fl_Button *btn_close = new Fl_Button(350, 370, 40, 24, "&Close");
-	btn_close->callback(cb_ok, 0);
+// 	Fl_Button *btn_close = new Fl_Button(350, 370, 40, 24, "&Close");
+// 	btn_close->callback(cb_ok, 0);
 
-	this->end();
-}
+// 	this->end();
+// }
 
-void NstTimerSplitWindow::refresh() {
-	const char* basefmt = "Split %d: %.3f secs\n";
-	char line[64] = {0};
+// void NstTimerSplitWindow::refresh() {
+// 	const char* basefmt = "Split %d: %.3f secs\n";
+// 	char line[64] = {0};
 
-	// get splits from the emulator
-	std::vector<time_ms>* splits = emulator.timer.getSplits();
+// 	// get splits from the emulator
+// 	std::vector<time_ms>* splits = emulator.timer.getSplits();
 
-	// create the full text buf with the splits info; because we pop the
-	// split from the splits vector, we use a size > 0 as a signal to know
-	// when a new split was created.
-	if (splits->size() > 0) {
-		split_count++;
+// 	// create the full text buf with the splits info; because we pop the
+// 	// split from the splits vector, we use a size > 0 as a signal to know
+// 	// when a new split was created.
+// 	if (splits->size() > 0) {
+// 		split_count++;
 
-		// fetch the last split
-		float secs = ((float)splits->back() / 1000.00);
-		sprintf(line, basefmt, split_count, secs);
+// 		// fetch the last split
+// 		float secs = ((float)splits->back() / 1000.00);
+// 		sprintf(line, basefmt, split_count, secs);
 
-		// update the text buffer
-		buff->append(line);
-		disp->redraw();
+// 		// update the text buffer
+// 		buff->append(line);
+// 		disp->redraw();
 
-		// we remove the entry from the vec after we've rendered
-		splits->pop_back();
-	}
-}
+// 		// we remove the entry from the vec after we've rendered
+// 		splits->pop_back();
+// 	}
+// }

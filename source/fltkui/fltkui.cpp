@@ -44,6 +44,7 @@
 #include "cheats.h"
 
 #include "fltkui.h"
+#include "fltkui_stimer.h"
 #include "fltkui_archive.h"
 #include "fltkui_cheats.h"
 #include "fltkui_config.h"
@@ -98,6 +99,11 @@ static void fltkui_config(Fl_Widget* w, void* userdata) {
 }
 
 static void fltkui_timer(Fl_Widget* w, void* userdata) {
+	if (!loaded) { return; }
+	if (timewin->visible()) {
+		timewin->hide();
+		return;
+	}
 	timewin->show();
 }
 
@@ -431,7 +437,7 @@ static Fl_Menu_Item menutable[] = {
 		{"Switch Disk", 0, fltkui_fds_switch, 0, FL_MENU_DIVIDER},
 		{"Cheats...", 0, fltkui_cheats, 0, FL_MENU_DIVIDER},
 		{"Configuration...", 0, fltkui_config, 0},
-		{"Split Timer...", 0, fltkui_timer, 0},
+		{"Split Timer...", FL_ALT + 'w', fltkui_timer, 0},
 		{0}, // End Emulator
 	{"&Help", 0, 0, 0, FL_SUBMENU},
 		{"About", 0, fltkui_about, 0, 0},
