@@ -58,6 +58,7 @@ namespace Nes
                 void Reset();
                 time_ms duration();
                 time_ms lastSplit();
+                std::vector<time_ms>* getSplits();
             private:
                 bool timerActive;
                 time_ms startTime;

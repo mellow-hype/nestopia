@@ -22,9 +22,11 @@
 
 #include <cstdio>
 #include <cstring>
+#include <string>
 
 #include <FL/Fl.H>
 #include <FL/Fl_Double_Window.H>
+#include <FL/Fl_Text_Display.H>
 #include <FL/Fl_Box.H>
 #include <FL/Fl_Button.H>
 #include <FL/Fl_Gl_Window.H>
@@ -62,6 +64,7 @@ NstInputConfWindow *icfg;
 static Fl_Dial *dial_vall, *dial_vsq1, *dial_vsq2, *dial_vtri, *dial_vnoise, *dial_vdpcm,
 	*dial_vfds, *dial_vmmc5, *dial_vvrc6, *dial_vvrc7, *dial_vn163, *dial_vs5b;
 
+extern Emulator emulator;
 extern inputsettings_t inputconf;
 
 static void cb_filter(Fl_Widget *w, long) {
@@ -657,4 +660,43 @@ void NstConfWindow::populate() {
 	Fl_Button *btn_ok = new Fl_Button(350, 370, 40, 24, "&OK");
 	btn_ok->callback(cb_ok, 0);
 	this->end();
+}
+
+
+void NstTimerSplitWindow::populate() {
+	split_count = 0;
+	buff = new Fl_Text_Buffer();
+	disp = new Fl_Text_Display(20, 20, 400-40, 400-60, "Splits");
+	disp->buffer(buff);
+
+	Fl_Button *btn_close = new Fl_Button(350, 370, 40, 24, "&Close");
+	btn_close->callback(cb_ok, 0);
+
+	this->end();
+}
+
+void NstTimerSplitWindow::refresh() {
+	const char* basefmt = "Split %d: %.3f secs\n";
+	char line[64] = {0};
+
+	// get splits from the emulator
+	std::vector<time_ms>* splits = emulator.timer.getSplits();
+
+	// create the full text buf with the splits info; because we pop the
+	// split from the splits vector, we use a size > 0 as a signal to know
+	// when a new split was created.
+	if (splits->size() > 0) {
+		split_count++;
+
+		// fetch the last split
+		float secs = ((float)splits->back() / 1000.00);
+		sprintf(line, basefmt, split_count, secs);
+
+		// update the text buffer
+		buff->append(line);
+		disp->redraw();
+
+		// we remove the entry from the vec after we've rendered
+		splits->pop_back();
+	}
 }

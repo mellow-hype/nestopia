@@ -795,7 +795,7 @@ void nst_toggle_timer() {
 void nst_state_save(const char *filename) {
     // hypr; Reset the split timer before saving state; i.e. all loads will start
     // with a clean SplitTimer
-    // emulator.timer.Reset();
+    emulator.timer.Reset();
 
     // Save a state by filename
     Machine machine(emulator);

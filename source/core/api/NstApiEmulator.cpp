@@ -80,6 +80,10 @@ namespace Nes
         time_ms SplitTimer::duration() {
             return stopTime - startTime;
         }
+
+        std::vector<time_ms>* SplitTimer::getSplits() {
+            return &splits;
+        }
     }
 
 }

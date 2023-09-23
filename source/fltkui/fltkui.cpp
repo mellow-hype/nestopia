@@ -55,6 +55,7 @@ static Fl_Menu_Bar *menubar;
 static NstGlArea *glarea;
 static NstChtWindow *chtwin;
 static NstConfWindow *confwin;
+static NstTimerSplitWindow *timewin;
 static int fps = 60;
 
 extern int loaded;
@@ -94,6 +95,10 @@ static void fltkui_cheats(Fl_Widget* w, void* userdata) {
 
 static void fltkui_config(Fl_Widget* w, void* userdata) {
 	confwin->show();
+}
+
+static void fltkui_timer(Fl_Widget* w, void* userdata) {
+	timewin->show();
 }
 
 static void fltkui_rom_open(Fl_Widget* w, void* userdata) {
@@ -426,6 +431,7 @@ static Fl_Menu_Item menutable[] = {
 		{"Switch Disk", 0, fltkui_fds_switch, 0, FL_MENU_DIVIDER},
 		{"Cheats...", 0, fltkui_cheats, 0, FL_MENU_DIVIDER},
 		{"Configuration...", 0, fltkui_config, 0},
+		{"Split Timer...", 0, fltkui_timer, 0},
 		{0}, // End Emulator
 	{"&Help", 0, 0, 0, FL_SUBMENU},
 		{"About", 0, fltkui_about, 0, 0},
@@ -446,6 +452,10 @@ void makenstwin(const char *name) {
 	// Configuration Window
 	confwin = new NstConfWindow(400, 400, "Configuration");
 	confwin->populate();
+
+	// Timer Window
+	timewin = new NstTimerSplitWindow(400, 400, "Split Timer");
+	timewin->populate();
 
 	// Main Window
 	nstwin = new NstWindow(rendersize.w, rendersize.h + MBARHEIGHT, name);
@@ -503,7 +513,7 @@ int main(int argc, char *argv[]) {
 	nst_db_load();
 
 	makenstwin(argv[0]);
-	nstwin->label("Nestopia UE");
+	nstwin->label("hypr-Nestopia UE");
 	nstwin->show();
 	menubar->show();
 	glarea->make_current();
@@ -554,6 +564,7 @@ int main(int argc, char *argv[]) {
 			}
 		}
 
+
 		frames = (fps / refreshrate);
 		framefrags += fps % refreshrate;
 
@@ -564,6 +575,10 @@ int main(int argc, char *argv[]) {
 
 		for (int i = 0; i < frames; i++) { nst_emuloop(); }
 		glarea->redraw();
+
+		if (timewin->visible()) {
+			timewin->refresh();
+		}
 	}
 
 	// Remove the cartridge and shut down the NES
