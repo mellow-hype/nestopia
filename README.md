@@ -1,6 +1,6 @@
 # hypr-nestopia - custom nestopia fork
 
-This summarizes the customizations that have been made to the original Nestopia version this fork originates
+This summarizes the customizations that have been made to the 0ldsk00l fork of Nestopia tha this fork originates
 from.
 
 ## TODO
