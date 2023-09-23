@@ -1,3 +1,102 @@
+# hypr-nestopia - custom nestopia fork
+
+This summarizes the customizations that have been made to the original Nestopia version this fork originates
+from.
+
+## TODO
+
+- [] find a good way to display split times on-screen
+
+## Features
+### Additional Quick Save/Load Slot Keyboard Hotkeys
+
+Vanilla nestopia only provided hotkey mappings for slot 0 and 1; two more slots have been added
+(slots 2 and 3) and mapped to hotkeys.
+
+Keyboard mappings:
+
+```ini
+Load_slot0 = '1'
+Load_slot1 = '2'
+Load_slot2 = '3'
+Load_slot3 = '4'
+
+Save_slot0 = 'F5'
+Save_slot1 = 'F6'
+Save_slot2 = 'F7'
+Save_slot3 = 'F8'
+```
+
+### Save/Load Slot Joystick Control Layer
+
+_NOTE: requires a controller with at least 2 extra buttons available to map to the layer toggles_
+
+A simple quick save/load controller layer has been implemented that can be used to trigger quick
+save and load actions on 4 slots from a gamepad/controller.
+
+The layers can be toggled with these controls by default:
+
+```ini
+qsave_layer_toggle = Right stick click
+qload_layer_toggle = Left stick click
+```
+
+Once the desired layer is toggled, the A/B/X/Y cluster will be temporaily remapped to act as slot selectors for
+slots 0,1,2, and 3, starting clockwise from the top.
+
+```ini
+slot0 = X
+slot1 = A
+slot2 = B
+slot3 = Y
+```
+
+## Built-In Split Timer
+
+A simple split timer has been built into the Emulator class in the Nestopia API core. The clock can
+be toggled on and off, and each time it is toggled off the split time is calculated from the last
+start time and displayed in a message on-screen. The split values are also saved to a vector in the
+`SplitTimer` object.
+
+## Controls
+
+A toggle control has been created for both keyboard and joystick/gamepad. To use the timer, hit
+the toggle once to start and then again to stop it and calculate the split time.
+
+_NOTE: the timer doesn't automatically continue so in order to start a new split you need to toggle it back on after completing the last one._
+
+```ini
+Keyboard = 't'
+Gamepad = 'Special bottom right'
+```
+
+## Reference: Controller Mapping: 8BitDo SN30Pro
+
+Controls based on the 8BitDo SN30Pro wired USB controller, which presents itself as an Xbox 360
+controller to the host.
+
+```ini
+# Possible values for joystick input:
+#     j[joystick number][a|b|h][button/hat/axis number][1/0 = +/- (axes only)]
+# Example: j0b3 = joystick 0, button 3. j1a11 = joystick 1, axis 1 + 1";
+
+j0b0 = A
+j0b1 = B
+j0b2 = Y
+j0b3 = X
+j0b4 = L1
+j0b5 = R1
+j0b6 = select
+j0b7 = start
+j0b8 = special bottom right
+j0b9 = left stick click
+j0b10 = right stick click
+```
+
+
+---
+
+# Original README
 ## About
 This project is a fork of the original Nestopia source code, plus the 
 Linux port. The purpose of the project is to make sure people who want
