@@ -66,7 +66,7 @@ void NstTimerSplitWindow::populate() {
 }
 
 void NstTimerSplitWindow::refresh() {
-	const char* basefmt = "[%s]\tSplit %.2d: %s\n";
+	const char* basefmt = "[%s] Split %4d:\t%s\n";
 	char line[100] = {0};
 
 	// get splits from the emulator
