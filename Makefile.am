@@ -733,6 +733,8 @@ nestopia_SOURCES += \
 	source/fltkui/fltkui_cheats.cpp \
 	source/fltkui/fltkui_stimer.h \
 	source/fltkui/fltkui_stimer.cpp \
+	source/fltkui/fltkui_debug.h \
+	source/fltkui/fltkui_debug.cpp \
 	source/fltkui/fltkui.cpp \
 	source/fltkui/fltkui.h \
 	source/fltkui/fltkui_config.cpp

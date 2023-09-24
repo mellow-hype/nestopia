@@ -6,12 +6,24 @@
 
 #define SPLIT_WIN_W 400
 
-class NstTimerSplitWindow : public Fl_Window {
+class SplitWindow : public Fl_Window {
 private:
 	int split_count;
 
 public:
-	NstTimerSplitWindow(int x, int y, int w, int h, const char* t = 0) : Fl_Window(x, y, w, h, t) { }
+	SplitWindow(int x, int y, int w, int h, const char* t = 0) : Fl_Window(x, y, w, h, t) { }
+	virtual ~SplitWindow() { }
+
+	Fl_Text_Display *disp;
+	Fl_Text_Buffer *buff;
+};
+
+class NstTimerSplitWindow : public SplitWindow {
+private:
+	int split_count;
+
+public:
+	NstTimerSplitWindow(int x, int y, int w, int h, const char* t = 0) : SplitWindow(x, y, w, h, t) { }
 	virtual ~NstTimerSplitWindow() { }
 
 	void populate();
@@ -20,6 +32,5 @@ public:
 	Fl_Text_Display *disp;
 	Fl_Text_Buffer *buff;
 };
-
 
 #endif

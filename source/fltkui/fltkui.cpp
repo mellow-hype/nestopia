@@ -48,6 +48,7 @@
 #include "fltkui_archive.h"
 #include "fltkui_cheats.h"
 #include "fltkui_config.h"
+#include "fltkui_debug.h"
 
 #define MBARHEIGHT 24
 
@@ -58,6 +59,7 @@ static NstGlAreaSplits *gltimewin;
 static NstChtWindow *chtwin;
 static NstConfWindow *confwin;
 static NstTimerSplitWindow *timewin;
+static NstDebugSplitWindow *debugwin;
 static int fps = 60;
 
 extern int loaded;
@@ -99,15 +101,43 @@ static void fltkui_config(Fl_Widget* w, void* userdata) {
 	confwin->show();
 }
 
-static void fltkui_toggle_splits() {
+static void fltkui_toggle_debug_split() {
+	int defer_off = 0;
 	if (timewin->visible()) {
-		nstwin->size(nstwin->w()-timewin->w(), nstwin->h());
+		defer_off = timewin->w();
+		timewin->hide();
+	}
+
+	if (debugwin->visible()) {
+		nstwin->size(nstwin->w() - debugwin->w() + defer_off, nstwin->h());
+		debugwin->hide();
+	} else {
+		nstwin->size(nstwin->w() + debugwin->w() - defer_off, nstwin->h());
+		debugwin->show();
+	}
+}
+
+static void fltkui_toggle_splits() {
+	int defer_off = 0;
+	if (debugwin->visible()) {
+		defer_off = debugwin->w();
+		debugwin->hide();
+	}
+
+	if (timewin->visible()) {
+		nstwin->size(nstwin->w() - timewin->w() + defer_off, nstwin->h());
 		timewin->hide();
 	} else {
-		nstwin->size(nstwin->w()+timewin->w(), nstwin->h());
+		nstwin->size(nstwin->w() + timewin->w() - defer_off, nstwin->h());
 		timewin->show();
 	}
 }
+
+static void fltkui_debug(Fl_Widget* w, void* userdata) {
+	if (!loaded) { return; }
+	fltkui_toggle_debug_split();
+}
+
 
 static void fltkui_timer(Fl_Widget* w, void* userdata) {
 	if (!loaded) { return; }
@@ -447,6 +477,7 @@ static Fl_Menu_Item menutable[] = {
 		{0}, // End Emulator
 	{"&Tools", 0, 0, 0, FL_SUBMENU},
 		{"Time Splits", FL_ALT + 'w', fltkui_timer, 0},
+		{"Debug View", FL_ALT + 'd', fltkui_debug, 0},
 		{0}, // End Tools
 	{"&Help", 0, 0, 0, FL_SUBMENU},
 		{"About", 0, fltkui_about, 0, 0},
@@ -496,6 +527,14 @@ void makenstwin(const char *name) {
 									  rendersize.h + MBARHEIGHT + w_offset);
 	timewin->populate();
 
+	// Debug Window - nest it into a bordered inner window
+	debugwin = new NstDebugSplitWindow(nstwin->w() - SPLIT_WIN_W - w_offset_pad,
+									  MBARHEIGHT,
+									  SPLIT_WIN_W,
+									  rendersize.h + MBARHEIGHT + w_offset);
+	debugwin->populate();
+	timewin->hide();
+
 	nstwin->end();
 
 }
@@ -542,11 +581,11 @@ int main(int argc, char *argv[]) {
 	makenstwin(argv[0]);
 	// hide the time splits window by default
 	nstwin->label("hypr-Nestopia UE");
+	fltkui_toggle_debug_split();
 	nstwin->show();
 	menubar->show();
 	glarea->make_current();
 	glarea->show();
-	fltkui_toggle_splits();
 
 	Fl::check();
 
@@ -606,6 +645,8 @@ int main(int argc, char *argv[]) {
 		glarea->redraw();
 
 		timewin->refresh();
+		if (debugwin->visible())
+			debugwin->refresh();
 	}
 
 	// Remove the cartridge and shut down the NES

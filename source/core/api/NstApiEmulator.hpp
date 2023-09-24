@@ -99,6 +99,8 @@ namespace Nes
             */
             ulong Frame() const throw();
 
+            std::string StateDump();
+
         private:
 
             Core::Machine& machine;

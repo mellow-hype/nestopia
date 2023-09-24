@@ -470,16 +470,8 @@ namespace Nes
 				void Remove(Address,const Io::Port&,IoMap&);
 			};
 
-			uint pc;
-			Cycles cycles;
-			uint a;
-			uint x;
-			uint y;
-			uint sp;
-			Flags flags;
 			Interrupt interrupt;
 			Hooks hooks;
-			uint opcode;
 			word jammed;
 			word model;
 			Linker linker;
@@ -493,6 +485,14 @@ namespace Nes
 			static const byte writeClocks[0x100];
 
 		public:
+			uint pc;
+			Cycles cycles;
+			uint a;
+			uint x;
+			uint y;
+			uint sp;
+			uint opcode;
+			Flags flags;
 
 			Apu& GetApu()
 			{
