@@ -468,9 +468,14 @@ void makenstwin(const char *name) {
 	confwin = new NstConfWindow(400, 400, "Configuration");
 	confwin->populate();
 
+	int w_offset = 20;
+	int w_offset_pad = w_offset / 2;
+
 	// Main Window
-	nstwin = new NstWindow(rendersize.w + SPLIT_WIN_W, rendersize.h + MBARHEIGHT, name);
-	nstwin->color(FL_BLACK);
+	nstwin = new NstWindow(rendersize.w + SPLIT_WIN_W + w_offset,
+						   rendersize.h + MBARHEIGHT + w_offset,
+						   name);
+	nstwin->box(FL_FLAT_BOX);
 	nstwin->xclass("nestopia");
 
 	// Menu Bar
@@ -478,12 +483,17 @@ void makenstwin(const char *name) {
 	menubar->box(FL_FLAT_BOX);
 	menubar->menu(menutable);
 
-	// Game Render Area
-	glarea = new NstGlArea(0, MBARHEIGHT, nstwin->w()-400, nstwin->h() - MBARHEIGHT);
+	// Game Render Area - nest it into a bordered inner window
+	glarea = new NstGlArea(w_offset_pad, (MBARHEIGHT + w_offset_pad),
+						   (nstwin->w() - SPLIT_WIN_W - w_offset),
+						   (nstwin->h() - MBARHEIGHT - w_offset));
 	glarea->color(FL_BLACK);
 
-	// Timer Window
-	timewin = new NstTimerSplitWindow(nstwin->w() - SPLIT_WIN_W, MBARHEIGHT, SPLIT_WIN_W, rendersize.h + MBARHEIGHT);
+	// Timer Window - nest it into a bordered inner window
+	timewin = new NstTimerSplitWindow(nstwin->w() - SPLIT_WIN_W - w_offset_pad,
+									  MBARHEIGHT,
+									  SPLIT_WIN_W,
+									  rendersize.h + MBARHEIGHT + w_offset);
 	timewin->populate();
 
 	nstwin->end();

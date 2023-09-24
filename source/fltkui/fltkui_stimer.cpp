@@ -48,7 +48,7 @@ void NstTimerSplitWindow::reset() {
 void NstTimerSplitWindow::populate() {
 	split_count = 0;
 	buff = new Fl_Text_Buffer();
-	disp = new Fl_Text_Display(20, 20, 400-40, this->h()-80, "Splits");
+	disp = new Fl_Text_Display(20, 20, w()-25, h()-80, "Splits");
 	disp->labelfont(FL_BOLD);
 	disp->labelsize(14);
 	disp->buffer(buff);
@@ -56,10 +56,10 @@ void NstTimerSplitWindow::populate() {
 	Fl_Button *btn_save = new Fl_Button(20, this->h()-55, 50, 24, "Save");
 	btn_save->callback(cb_save_splits, 0);
 
-	Fl_Button *btn_clear = new Fl_Button(185, this->h()-55, 50, 24, "Clear");
+	Fl_Button *btn_clear = new Fl_Button((disp->w()/2), this->h()-55, 50, 24, "Clear");
 	btn_clear->callback(cb_clear, 0);
 
-	Fl_Button *btn_close = new Fl_Button(330, this->h()-55, 50, 24, "Hide");
+	Fl_Button *btn_close = new Fl_Button(disp->w()-30, this->h()-55, 50, 24, "Hide");
 	btn_close->callback(cb_hide, 0);
 
 	this->end();
