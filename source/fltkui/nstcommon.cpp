@@ -683,6 +683,12 @@ void nst_set_dirs() {
         fprintf(stderr, "Failed to create %s: %d\n", dirstr, errno);
     }
 
+    // create splits directory if it doesn't exist
+    snprintf(dirstr, sizeof(dirstr), "%ssplits", nstpaths.nstdir);
+    if (mkdir(dirstr, 0755) && errno != EEXIST) {
+        fprintf(stderr, "Failed to create %s: %d\n", dirstr, errno);
+    }
+
     // Construct the custom palette path
     snprintf(nstpaths.palettepath, sizeof(nstpaths.palettepath), "%s%s", nstpaths.nstdir, "custom.pal");
 
@@ -708,6 +714,9 @@ void nst_set_paths(const char *filename) {
             break;
         }
     }
+
+    // Set up the splits directory
+    snprintf(nstpaths.splitlogdir, sizeof(nstpaths.splitlogdir), "%ssplits/", nstpaths.nstdir);
 
     // Set up the sample directory
     snprintf(nstpaths.sampdir, sizeof(nstpaths.sampdir), "%ssamples/", nstpaths.nstdir);
@@ -759,39 +768,6 @@ void nst_set_rewind(int direction) {
     }
 }
 
-
-// hypr; START Custom SplitTimer
-void nst_start_stimer() {
-    emulator.timer.startTimer();
-    fprintf(stderr, "Started split timer\n");
-    nst_video_print("Started timer", 8, 212, 2, true);
-}
-
-// hypr; STOP Custom SplitTimer
-void nst_stop_stimer() {
-    emulator.timer.stopTimer();
-    fprintf(stderr, "Stopped timer\n");
-
-    // calculate split in seconds
-    char msg[128] = {0};
-    time_ms split_ms = emulator.timer.lastSplit();
-    std::string ts = format_split_ms_string(split_ms);
-    sprintf(msg, "Split: %s", ts.c_str());
-
-    fprintf(stderr, "%s\n", msg);
-    nst_video_print(msg, 8, 212, 2, true);
-}
-
-// hypr; TOGGLE Custom SplitTimer
-void nst_toggle_timer() {
-    if (emulator.timer.isTimerRunning()) {
-        nst_stop_stimer();
-    } else {
-        nst_start_stimer();
-    }
-}
-
-
 void nst_state_save(const char *filename) {
     // hypr; Reset the split timer before saving state; i.e. all loads will start
     // with a clean SplitTimer
@@ -831,7 +807,6 @@ void nst_state_quicksave(int slot) {
 
     nst_video_print(msg, 8, 212, 2, true);
 }
-
 
 void nst_state_quickload(int slot) {
     // Quick Load State
@@ -1056,4 +1031,37 @@ int nst_load(const char *filename) {
 
     loaded = 1;
     return loaded;
+}
+
+
+
+// hypr; START Custom SplitTimer
+void nst_start_stimer() {
+    emulator.timer.startTimer();
+    fprintf(stderr, "Started timer...");
+    nst_video_print("Started timer", 8, 212, 2, true);
+}
+
+// hypr; STOP Custom SplitTimer
+void nst_stop_stimer() {
+    emulator.timer.stopTimer();
+    fprintf(stderr, "Stopped timer\n");
+
+    // calculate split in seconds
+    char msg[128] = {0};
+    time_ms split_ms = emulator.timer.lastSplit();
+    std::string ts = format_split_ms_string(split_ms);
+    sprintf(msg, "Split: %s", ts.c_str());
+
+    fprintf(stdout, "%s\n", msg);
+    nst_video_print(msg, 8, 212, 2, true);
+}
+
+// hypr; TOGGLE Custom SplitTimer
+void nst_toggle_timer() {
+    if (emulator.timer.isTimerRunning()) {
+        nst_stop_stimer();
+    } else {
+        nst_start_stimer();
+    }
 }

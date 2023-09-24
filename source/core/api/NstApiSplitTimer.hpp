@@ -19,7 +19,11 @@
 
 typedef unsigned long long time_ms ;
 
-std::string format_split_ms_string(time_ms split_time);
+unsigned long long timeSinceEpochMillisec();
+const std::string format_split_ms_string(time_ms split_time);
+const std::string return_current_time_and_date();
+const std::string return_current_time();
+const std::string return_current_date_iso();
 
 namespace Nes
 {

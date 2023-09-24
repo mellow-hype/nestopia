@@ -4,16 +4,19 @@
 
 #include <FL/Fl_Text_Display.H>
 
-class NstTimerSplitWindow : public Fl_Double_Window {
+#define SPLIT_WIN_W 400
+
+class NstTimerSplitWindow : public Fl_Window {
 private:
 	int split_count;
 
 public:
-	NstTimerSplitWindow(int w, int h, const char* t) : Fl_Double_Window(w, h, t) { }
+	NstTimerSplitWindow(int x, int y, int w, int h, const char* t = 0) : Fl_Window(x, y, w, h, t) { }
 	virtual ~NstTimerSplitWindow() { }
 
 	void populate();
 	void refresh();
+	void reset();
 	Fl_Text_Display *disp;
 	Fl_Text_Buffer *buff;
 };

@@ -21,6 +21,15 @@ public:
 	}
 };
 
+class NstGlAreaSplits : public Fl_Window {
+private:
+
+public:
+	NstGlAreaSplits(int x, int y, int w, int h, const char *l = 0) : Fl_Window(x, y, w, h, l) {
+		box(FL_DOWN_FRAME);
+	}
+};
+
 extern Fl_Color NstGreen;
 extern Fl_Color NstPurple;
 extern Fl_Color NstRed;

@@ -11,25 +11,62 @@
 #include "fltkui_stimer.h"
 
 extern Emulator emulator;
+extern nstpaths_t nstpaths;
 
-static void cb_ok(Fl_Widget *w, long) {
-	w->parent()->hide();
+
+// Callback to hide the time splits window and resize the main view
+static void cb_hide(Fl_Widget *w, long) {
+    auto par = w->parent();
+	par->hide();
+    // resize the parent to remove the space that this window was taking up
+	par->parent()->size(
+        par->parent()->w() - par->w(),
+        par->h()
+    );
+}
+
+// Callback to clear the text buffer and reset the splits UI
+static void cb_clear(Fl_Widget *w, long) {
+	((NstTimerSplitWindow*)w->parent())->reset();
+}
+
+// Callback to save the splits window text buffer to disk
+static void cb_save_splits(Fl_Widget *w, long) {
+	char savepath[1024] = {0};
+	std::string dt = return_current_date_iso();
+	snprintf(savepath, sizeof(savepath), "%snestopia-splits-%s.log", nstpaths.splitlogdir, dt.c_str());
+	int res = ((NstTimerSplitWindow*)w->parent())->buff->savefile(savepath);
+	fprintf(stderr, "Saved splits to file: %s\n", savepath);
+}
+
+
+void NstTimerSplitWindow::reset() {
+	split_count = 0;
+	buff->text("");
 }
 
 void NstTimerSplitWindow::populate() {
 	split_count = 0;
 	buff = new Fl_Text_Buffer();
-	disp = new Fl_Text_Display(20, 20, 400-40, 400-60, "Splits");
+	disp = new Fl_Text_Display(20, 20, 400-40, this->h()-80, "Splits");
+	disp->labelfont(FL_BOLD);
+	disp->labelsize(14);
 	disp->buffer(buff);
 
-	Fl_Button *btn_close = new Fl_Button(350, 370, 40, 24, "&Close");
-	btn_close->callback(cb_ok, 0);
+	Fl_Button *btn_save = new Fl_Button(20, this->h()-55, 50, 24, "Save");
+	btn_save->callback(cb_save_splits, 0);
+
+	Fl_Button *btn_clear = new Fl_Button(185, this->h()-55, 50, 24, "Clear");
+	btn_clear->callback(cb_clear, 0);
+
+	Fl_Button *btn_close = new Fl_Button(330, this->h()-55, 50, 24, "Hide");
+	btn_close->callback(cb_hide, 0);
 
 	this->end();
 }
 
 void NstTimerSplitWindow::refresh() {
-	const char* basefmt = "Split %d: %s\n";
+	const char* basefmt = "[%s]\tSplit %.2d: %s\n";
 	char line[100] = {0};
 
 	// get splits from the emulator
@@ -43,13 +80,14 @@ void NstTimerSplitWindow::refresh() {
 
 		// fetch the last split
         std::string timestring = emulator.timer.lastSplitString();
-		snprintf(line, sizeof(line), basefmt, split_count, timestring.c_str());
+		std::string dt = return_current_time();
+		snprintf(line, sizeof(line), basefmt, dt.c_str(), split_count, timestring.c_str());
 
 		// update the text buffer
 		buff->append(line);
-		disp->redraw();
 
 		// we remove the entry from the vec after we've rendered
 		splits->pop_back();
+        disp->redraw();
 	}
 }

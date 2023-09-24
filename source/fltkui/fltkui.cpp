@@ -54,6 +54,7 @@
 static NstWindow *nstwin;
 static Fl_Menu_Bar *menubar;
 static NstGlArea *glarea;
+static NstGlAreaSplits *gltimewin;
 static NstChtWindow *chtwin;
 static NstConfWindow *confwin;
 static NstTimerSplitWindow *timewin;
@@ -98,9 +99,19 @@ static void fltkui_config(Fl_Widget* w, void* userdata) {
 	confwin->show();
 }
 
+static void fltkui_toggle_splits() {
+	if (timewin->visible()) {
+		nstwin->size(nstwin->w()-timewin->w(), nstwin->h());
+		timewin->hide();
+	} else {
+		nstwin->size(nstwin->w()+timewin->w(), nstwin->h());
+		timewin->show();
+	}
+}
+
 static void fltkui_timer(Fl_Widget* w, void* userdata) {
 	if (!loaded) { return; }
-	timewin->show();
+	fltkui_toggle_splits();
 }
 
 static void fltkui_rom_open(Fl_Widget* w, void* userdata) {
@@ -457,12 +468,8 @@ void makenstwin(const char *name) {
 	confwin = new NstConfWindow(400, 400, "Configuration");
 	confwin->populate();
 
-	// Timer Window
-	timewin = new NstTimerSplitWindow(400, 400, "Split Timer");
-	timewin->populate();
-
 	// Main Window
-	nstwin = new NstWindow(rendersize.w, rendersize.h + MBARHEIGHT, name);
+	nstwin = new NstWindow(rendersize.w + SPLIT_WIN_W, rendersize.h + MBARHEIGHT, name);
 	nstwin->color(FL_BLACK);
 	nstwin->xclass("nestopia");
 
@@ -471,10 +478,16 @@ void makenstwin(const char *name) {
 	menubar->box(FL_FLAT_BOX);
 	menubar->menu(menutable);
 
-	glarea = new NstGlArea(0, MBARHEIGHT, nstwin->w(), nstwin->h() - MBARHEIGHT);
+	// Game Render Area
+	glarea = new NstGlArea(0, MBARHEIGHT, nstwin->w()-400, nstwin->h() - MBARHEIGHT);
 	glarea->color(FL_BLACK);
 
+	// Timer Window
+	timewin = new NstTimerSplitWindow(nstwin->w() - SPLIT_WIN_W, MBARHEIGHT, SPLIT_WIN_W, rendersize.h + MBARHEIGHT);
+	timewin->populate();
+
 	nstwin->end();
+
 }
 
 int main(int argc, char *argv[]) {
@@ -517,11 +530,13 @@ int main(int argc, char *argv[]) {
 	nst_db_load();
 
 	makenstwin(argv[0]);
+	// hide the time splits window by default
 	nstwin->label("hypr-Nestopia UE");
 	nstwin->show();
 	menubar->show();
 	glarea->make_current();
 	glarea->show();
+	fltkui_toggle_splits();
 
 	Fl::check();
 
@@ -580,9 +595,7 @@ int main(int argc, char *argv[]) {
 		for (int i = 0; i < frames; i++) { nst_emuloop(); }
 		glarea->redraw();
 
-		if (timewin->visible()) {
-			timewin->refresh();
-		}
+		timewin->refresh();
 	}
 
 	// Remove the cartridge and shut down the NES

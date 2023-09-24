@@ -410,7 +410,6 @@ void nstsdl_input_match_joystick(Input::Controllers *controllers, SDL_Event even
 
             // hypr; add handling for quick load
             if (event.jbutton.button == qstate[0].jbutton.button && event.jbutton.which == qstate[0].jbutton.which) {
-                // test: have this input set the controller layer toggle
                 if (event.type == SDL_JOYBUTTONUP) {
                     player[0].slayer_active = player[0].slayer_active == true ? false: true;
                 }
@@ -585,8 +584,8 @@ void nstsdl_input_conf_defaults() {
     player[0].rwstop = nstsdl_input_translate_string("j0b5");
 
     // hypr; add qsave/load mappings for joystick clicks
-    player[0].qload1 = nstsdl_input_translate_string("j0b9");
-    player[0].qsave1 = nstsdl_input_translate_string("j0b10");
+    player[0].qload1 = nstsdl_input_translate_string("j0b9"); // left stick click
+    player[0].qsave1 = nstsdl_input_translate_string("j0b10"); // right stick click
 
     // hypr; GAMEPAD timer toggle w/ special right-side button on sn30
     player[0].timertoggle = nstsdl_input_translate_string("j0b8");

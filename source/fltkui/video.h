@@ -18,7 +18,7 @@ typedef struct {
 typedef struct {
 	int xpos;
 	int ypos;
-	char textbuf[32];
+	char textbuf[64];
 	char timebuf[6];
 	int drawtext;
 	bool drawtime;
