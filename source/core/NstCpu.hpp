@@ -25,6 +25,7 @@
 #ifndef NST_CPU_H
 #define NST_CPU_H
 
+#include "string"
 #include "NstAssert.hpp"
 #include "NstIoMap.hpp"
 #include "NstApu.hpp"
@@ -470,6 +471,12 @@ namespace Nes
 				void Remove(Address,const Io::Port&,IoMap&);
 			};
 
+			uint pc;
+			uint a;
+			uint x;
+			uint y;
+			uint sp;
+			uint opcode;
 			Interrupt interrupt;
 			Hooks hooks;
 			word jammed;
@@ -485,14 +492,25 @@ namespace Nes
 			static const byte writeClocks[0x100];
 
 		public:
-			uint pc;
 			Cycles cycles;
-			uint a;
-			uint x;
-			uint y;
-			uint sp;
-			uint opcode;
 			Flags flags;
+
+			std::string DumpState()
+			{
+				char regs[512] = {0};
+				sprintf(regs,
+						"pc: 0x%.4x\na: 0x%.2x\nx: 0x%.2x,\ny: 0x%.2x\nsp: 0x%.4x\n",
+						pc, a, x, y, sp);
+
+				char state[512] = {0};
+				sprintf(state,
+						"===STATE===\ncycles: %i\nframes: %i\n",
+						GetCycles(), GetFrameCycles());
+
+				char final_b[sizeof(state) + sizeof(regs)];
+				sprintf(final_b, "%s%s", regs, state);
+				return final_b;
+			}
 
 			Apu& GetApu()
 			{

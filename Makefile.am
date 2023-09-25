@@ -1,11 +1,11 @@
 ###############
 # Definitions #
 ###############
-bin_PROGRAMS = nestopia
+bin_PROGRAMS = hyprnestopia
 
 EXTRA_DIST = doc
 
-nestopia_CPPFLAGS = \
+hyprnestopia_CPPFLAGS = \
 	-I$(top_srcdir)/source \
 	-I$(top_srcdir)/source/fltkui \
 	-DNST_DATADIR=\"$(datadir)/nestopia\" \
@@ -15,7 +15,7 @@ nestopia_CPPFLAGS = \
 	$(LIBARCHIVE_CFLAGS) \
 	$(SDL2_CFLAGS) \
 	$(FLTK_CFLAGS)
-nestopia_LDADD = \
+hyprnestopia_LDADD = \
 	$(ZLIB_LIBS) \
 	$(LIBARCHIVE_LIBS) \
 	$(SDL2_LIBS) \
@@ -64,7 +64,7 @@ EXTRA_DIST += \
 	source/core/NstSoundRenderer.inl \
 	source/nes_ntsc/nes_ntsc.inl
 
-nestopia_SOURCES = \
+hyprnestopia_SOURCES = \
 	source/core/NstTrackerMovie.hpp \
 	source/core/NstFile.hpp \
 	source/core/NstAssert.cpp \
@@ -700,7 +700,7 @@ nestopia_SOURCES = \
 	source/nes_ntsc/nes_ntsc.h \
 	source/nes_ntsc/demo_impl.h
 
-nestopia_SOURCES += \
+hyprnestopia_SOURCES += \
 	source/fltkui/nstcommon.cpp \
 	source/fltkui/nstcommon.h \
 	source/fltkui/cheats.cpp \
@@ -725,7 +725,7 @@ nestopia_SOURCES += \
 	source/fltkui/audio.cpp \
 	source/fltkui/audio.h
 
-nestopia_SOURCES += \
+hyprnestopia_SOURCES += \
 	source/fltkui/fltkui_config.h \
 	source/fltkui/fltkui_archive.h \
 	source/fltkui/fltkui_archive.cpp \

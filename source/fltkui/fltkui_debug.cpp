@@ -49,9 +49,7 @@ void NstDebugSplitWindow::populate() {
 }
 
 void NstDebugSplitWindow::refresh() {
-	// update the text buffer
 	buff->text("Registers:\n=====================\n");
-	buff->append(emulator.StateDump().c_str());
-	// disp->scroll(buff->count_lines(0, buff->length()), 0);
+	buff->append(emulator.DumpRegs().c_str());
 	disp->redraw();
 }

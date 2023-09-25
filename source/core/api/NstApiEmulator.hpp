@@ -99,7 +99,7 @@ namespace Nes
             */
             ulong Frame() const throw();
 
-            std::string StateDump();
+            std::string DumpRegs();
 
         private:
 

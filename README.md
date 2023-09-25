@@ -78,7 +78,7 @@ Gamepad = 'Special bottom right'
 A basic GUI view is available to display all splits recorded during a session. It can be found in
 the menubar under _Tools>Time Splits_ (or with `Alt-w`).
 
-![split](splitwin2.png)
+![split](static/splitwin2.png)
 
 
 ## Reference: Controller Mapping: 8BitDo SN30Pro

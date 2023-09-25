@@ -868,7 +868,7 @@ void nst_emuloop() {
         for (int i = 0; i < (ffspeed ? conf.timing_ffspeed : 1); i++) {
             emulator.Execute(cNstVideo, cNstSound, cNstPads);
         }
-        emulator.StateDump();
+        emulator.DumpRegs();
     }
 }
 
