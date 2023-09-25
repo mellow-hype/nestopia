@@ -7,6 +7,24 @@
 
 #include "core/api/NstApiInput.hpp"
 
+
+typedef struct {
+	bool slayer_active;
+	bool llayer_active;
+
+	SDL_Event timertoggle;
+	SDL_Event qload1;
+	SDL_Event qsave1;
+} hyprpad_t;
+
+typedef struct {
+	int buttons[18];
+	int trigger[1];
+	int coord[2];
+	int coin[2];
+} hyprinputstate_t;
+
+
 typedef struct {
 	int u;
 	int d;
@@ -18,8 +36,6 @@ typedef struct {
 	int b;
 	int ta;
 	int tb;
-	bool slayer_active;
-	bool llayer_active;
 
 	SDL_Event ju;
 	SDL_Event jd;
@@ -33,9 +49,6 @@ typedef struct {
 	SDL_Event jtb;
 	SDL_Event rwstart;
 	SDL_Event rwstop;
-	SDL_Event timertoggle;
-	SDL_Event qload1;
-	SDL_Event qsave1;
 	SDL_Event softreset;
 	SDL_Event hardreset;
 } gamepad_t;

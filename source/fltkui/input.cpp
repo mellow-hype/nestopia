@@ -67,6 +67,11 @@ static inputstate_t inputstate[4];
 static buttonmap_t buttonmap[4];
 static int input_null = 0;
 
+// HYPR; custom controls
+hyprpad_t hypr[1];
+static hyprinputstate_t hyprstate[1];
+static buttonmap_t hyprbutton_map[4];
+
 static bool NST_CALLBACK nst_poll_pad(Input::UserData data, Input::Controllers::Pad& pad, uint port) {
 	uint buttons = 0;
 
@@ -321,13 +326,11 @@ int nstsdl_input_checksign(int axisvalue) {
 
 void nstsdl_input_conf_defaults() {
     // Set default input config
-    // quicksave keys
     inputconf.qsave1 = '1';
     inputconf.qsave2 = '2';
     inputconf.qsave3 = '3';
     inputconf.qsave4 = '4';
 
-    // quickload keys
     inputconf.qload1 = FL_F + 6; // F6
     inputconf.qload2 = FL_F + 7; // F7
     inputconf.qload3 = FL_F + 8; // F8
@@ -336,8 +339,6 @@ void nstsdl_input_conf_defaults() {
     // toggle split timer
     inputconf.timertoggle = 't';
 
-    player[0].slayer_active = false;
-    player[0].llayer_active = false;
 	player[0].ju = nstsdl_input_translate_string("j0h01", 0, 0);
 	player[0].jd = nstsdl_input_translate_string("j0h04", 0, 1);
 	player[0].jl = nstsdl_input_translate_string("j0h08", 0, 2);
@@ -356,11 +357,6 @@ void nstsdl_input_conf_defaults() {
 	player[0].softreset = nstsdl_input_translate_string("j0b99", 0, 12);
 	player[0].hardreset = nstsdl_input_translate_string("j0b99", 0, 13);
 
-    // // hypr; Mapping modified for 8BitDo SN30pro wired
-    player[0].qload1 = nstsdl_input_translate_string("j0b9", 0, 14);
-    player[0].qsave1 = nstsdl_input_translate_string("j0b10", 0, 15);
-    player[0].timertoggle = nstsdl_input_translate_string("j0b8", 0, 16);
-
 	player[1].ju = nstsdl_input_translate_string("j1h01", 1, 0);
 	player[1].jd = nstsdl_input_translate_string("j1h04", 1, 1);
 	player[1].jl = nstsdl_input_translate_string("j1h08", 1, 2);
@@ -371,6 +367,14 @@ void nstsdl_input_conf_defaults() {
 	player[1].jb = nstsdl_input_translate_string("j1b0", 1, 7);
 	player[1].jta = nstsdl_input_translate_string("j1b2", 1, 8);
 	player[1].jtb = nstsdl_input_translate_string("j1b3", 1, 9);
+
+    // // hypr; Mapping modified for 8BitDo SN30pro wired
+    hypr[0].slayer_active = false;
+    hypr[0].llayer_active = false;
+    hypr[0].qload1 = nstsdl_input_translate_string("j0b9", 0, 14);
+    hypr[0].qsave1 = nstsdl_input_translate_string("j0b10", 0, 15);
+    hypr[0].timertoggle = nstsdl_input_translate_string("j0b8", 0, 16);
+
 }
 
 void fltkui_input_conf_set(int kval, int pnum, int bnum) {
@@ -511,12 +515,15 @@ void nstsdl_input_conf_read() {
 	for (int i = 0; i < 4; i++) {
 		for (int j = 0; j < 12; j++) {
 			buttonmap[i].axis[j] = &input_null;
+			hyprbutton_map[i].axis[j] = &input_null;
 		}
 		for (int j = 0; j < 32; j++) {
 			buttonmap[i].button[j] = &input_null;
+			hyprbutton_map[i].button[j] = &input_null;
 		}
 		for (int j = 0; j < 4; j++) {
 			buttonmap[i].hat[j] = &input_null;
+			hyprbutton_map[i].hat[j] = &input_null;
 		}
 	}
 
@@ -553,11 +560,9 @@ void nstsdl_input_conf_read() {
 		if (inputconf.js_hardreset) { player[0].hardreset = nstsdl_input_translate_string(inputconf.js_hardreset, 0, 13); }
 
         // hypr; quick save/load tweak
-        if (inputconf.js_qsave1) { player[0].qsave1 = nstsdl_input_translate_string(inputconf.js_qsave1, 0, 14); }
-        if (inputconf.js_qload1) { player[0].qload1 = nstsdl_input_translate_string(inputconf.js_qload1, 0, 15); }
-
-        // // hypr; GAMEPAD timer toggle
-        if (inputconf.js_timer) { player[0].timertoggle = nstsdl_input_translate_string(inputconf.js_timer, 0, 16); }
+        if (inputconf.js_qsave1) { hypr[0].qsave1 = nstsdl_input_translate_string(inputconf.js_qsave1, 0, 14); }
+        if (inputconf.js_qload1) { hypr[0].qload1 = nstsdl_input_translate_string(inputconf.js_qload1, 0, 15); }
+        if (inputconf.js_timer) { hypr[0].timertoggle = nstsdl_input_translate_string(inputconf.js_timer, 0, 16); }
 
 		player[1].ju = nstsdl_input_translate_string(inputconf.js_p2u, 1, 0);
 		player[1].jd = nstsdl_input_translate_string(inputconf.js_p2d, 1, 1);
@@ -630,11 +635,11 @@ void nstsdl_input_conf_write() {
         fprintf(fp, "js_rwstop=%s\n", nstsdl_input_translate_event(player[0].rwstop));
 
         // hypr; GAMEPAD timer toggle
-        fprintf(fp, "js_timer=%s\n", nstsdl_input_translate_event(player[0].timertoggle));
+        fprintf(fp, "js_timer=%s\n", nstsdl_input_translate_event(hypr[0].timertoggle));
 
         // hypr; quick save/load
-        fprintf(fp, "js_qsave1=%s\n", nstsdl_input_translate_event(player[0].qsave1));
-        fprintf(fp, "js_qload1=%s\n", nstsdl_input_translate_event(player[0].qload1));
+        fprintf(fp, "js_qsave1=%s\n", nstsdl_input_translate_event(hypr[0].qsave1));
+        fprintf(fp, "js_qload1=%s\n", nstsdl_input_translate_event(hypr[0].qload1));
 
         fprintf(fp, "js_softreset=%s\n", nstsdl_input_translate_event(player[0].softreset));
         fprintf(fp, "js_hardreset=%s\n", nstsdl_input_translate_event(player[0].hardreset));
@@ -669,7 +674,7 @@ void nstsdl_input_conf_write() {
 
 void nstsdl_input_hypr_controls(SDL_Event& event) {
     // Handle special save/load layer
-    if (player[0].llayer_active || player[0].slayer_active) {
+    if (hypr[0].llayer_active || hypr[0].slayer_active) {
         unsigned int LAYER_BUTTONS_COUNT = 4;
         SDL_Event layer_buttons[LAYER_BUTTONS_COUNT] = {
             player[0].jtb, player[0].ja, player[0].jb, player[0].jta,
@@ -677,34 +682,35 @@ void nstsdl_input_hypr_controls(SDL_Event& event) {
 
         for (int j = 0; j < LAYER_BUTTONS_COUNT; j++) {
             if (layer_buttons[j].jbutton.button == event.jbutton.button && layer_buttons[j].jbutton.which == event.jbutton.which) {
-                if (player[0].slayer_active) {
-                    player[0].slayer_active = false;
+                if (hypr[0].slayer_active) {
+                    hypr[0].slayer_active = false;
                     nst_state_quicksave(j);
-                } else if (player[0].llayer_active) {
-                    player[0].llayer_active = false;
+                } else if (hypr[0].llayer_active) {
+                    hypr[0].llayer_active = false;
                     nst_state_quickload(j);
                 }
             }
         }
     }
 
+
     // hypr; handle toggling the timer from a joystick/gamepad
-    if (event.jbutton.button == player[0].timertoggle.jbutton.button
-            && event.jbutton.which == player[0].timertoggle.jbutton.which
+    if (event.jbutton.button == hypr[0].timertoggle.jbutton.button
+            && event.jbutton.which == hypr[0].timertoggle.jbutton.which
             && event.type == SDL_JOYBUTTONDOWN) {
         nst_toggle_timer();
     }
     // hypr; handle toggling the quick save layer
-    if (event.jbutton.button == player[0].qsave1.jbutton.button
-            && event.jbutton.which == player[0].qsave1.jbutton.which
+    if (event.jbutton.button == hypr[0].qsave1.jbutton.button
+            && event.jbutton.which == hypr[0].qsave1.jbutton.which
             && event.type == SDL_JOYBUTTONDOWN) {
-        player[0].slayer_active = player[0].slayer_active == true ? false: true;
+        hypr[0].slayer_active = hypr[0].slayer_active == true ? false: true;
     }
     // hypr; handle toggling the quick load layer
-    if (event.jbutton.button == player[0].qload1.jbutton.button
-            && event.jbutton.which == player[0].qload1.jbutton.which
+    if (event.jbutton.button == hypr[0].qload1.jbutton.button
+            && event.jbutton.which == hypr[0].qload1.jbutton.which
             && event.type == SDL_JOYBUTTONDOWN) {
-        player[0].llayer_active = player[0].llayer_active == true ? false: true;
+        hypr[0].llayer_active = hypr[0].llayer_active == true ? false: true;
     }
 }
 
@@ -713,7 +719,7 @@ void nstsdl_input_process(SDL_Event& event) {
 	switch (event.type) {
 		case SDL_JOYBUTTONUP:
 		case SDL_JOYBUTTONDOWN: {
-            if (!player[0].llayer_active && !player[0].slayer_active) {
+            if (!hypr[0].llayer_active && !hypr[0].slayer_active) {
                 // Handle normal mapping
                 *buttonmap[event.jbutton.which].button[event.jbutton.button] = event.jbutton.type == SDL_JOYBUTTONDOWN;
             }
@@ -818,7 +824,11 @@ SDL_Event nstsdl_input_translate_string(const char *str, const int pnum, const i
 	switch (event.type) {
 		case SDL_JOYBUTTONDOWN:
 			//printf("mapping js %d button %d to player %d nstbutton %d\n", event.jbutton.which, event.jbutton.button, pnum, bnum);
-			buttonmap[event.jbutton.which].button[event.jbutton.button] = &inputstate[pnum].buttons[bnum];
+            if (str == inputconf.js_timer || str == inputconf.js_qsave1 || str == inputconf.js_qload1) {
+                buttonmap[event.jbutton.which].button[event.jbutton.button] = &hyprstate[pnum].buttons[bnum];
+            } else {
+                buttonmap[event.jbutton.which].button[event.jbutton.button] = &inputstate[pnum].buttons[bnum];
+            }
 			break;
 		case SDL_JOYHATMOTION:
 			if (event.jhat.value & SDL_HAT_UP) {
