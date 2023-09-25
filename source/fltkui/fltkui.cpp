@@ -373,10 +373,10 @@ static void fltkui_about(Fl_Widget* w, void* userdata) {
 
 	Fl_Box text2(0, 208, 460, 24, "Cycle-Accurate Nintendo Entertainment System Emulator");
 
-	Fl_Box text3(0, 256, 460, 24, "FLTK Frontend\n(c) 2012-2022, R. Danbrook\n(c) 2007-2008, R. Belmont");
+	Fl_Box text3(0, 256, 460, 24, "FLTK Frontend\n(c) 2012-2023, R. Danbrook\n(c) 2007-2008, R. Belmont");
 	text3.labelsize(10);
 
-	Fl_Box text4(0, 320, 460, 24, "Nestopia Emulator\n(c) 2020-2022, Rupert Carmichael\n(c) 2012-2020, Nestopia UE Contributors\n(c) 2003-2008, Martin Freij");
+	Fl_Box text4(0, 320, 460, 24, "Nestopia Emulator\n(c) 2020-2023, Rupert Carmichael\n(c) 2012-2020, Nestopia UE Contributors\n(c) 2003-2008, Martin Freij");
 	text4.labelsize(10);
 
 	Fl_Box text5(0, 360, 460, 24, "Icon based on drawing by Trollekop");
@@ -426,10 +426,10 @@ int NstGlArea::handle(int e) {
 				cursor(FL_CURSOR_DEFAULT);
 				break;
 			case FL_PUSH:
-				nst_input_inject_mouse(cNstPads, Fl::event_button(), 1, Fl::event_x(), Fl::event_y());
+				nst_input_inject_mouse(Fl::event_button(), 1, Fl::event_x(), Fl::event_y());
 				break;
 			case FL_RELEASE:
-				nst_input_inject_mouse(cNstPads, Fl::event_button(), 0, Fl::event_x(), Fl::event_y());
+				nst_input_inject_mouse(Fl::event_button(), 0, Fl::event_x(), Fl::event_y());
 				break;
 		}
 	}
@@ -619,17 +619,10 @@ int main(int argc, char *argv[]) {
 		else if (!nstwin->shown() && (confwin->shown() || chtwin->shown())) {
 			break;
 		}
+
 		SDL_Event event;
 		while (SDL_PollEvent(&event)) {
-			switch (event.type) {
-				case SDL_JOYHATMOTION:
-				case SDL_JOYAXISMOTION:
-				case SDL_JOYBUTTONDOWN:
-				case SDL_JOYBUTTONUP:
-					nstsdl_input_process(cNstPads, event);
-					break;
-				default: break;
-			}
+			nstsdl_input_process(event);
 		}
 
 
