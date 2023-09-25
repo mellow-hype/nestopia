@@ -41,7 +41,7 @@ typedef struct {
 } gamepad_t;
 
 typedef struct {
-	int buttons[14];
+	int buttons[18];
 	int trigger[1];
 	int coord[2];
 	int coin[2];
