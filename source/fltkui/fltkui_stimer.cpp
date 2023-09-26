@@ -4,15 +4,22 @@
 #include <FL/Fl_Text_Display.H>
 #include <FL/Fl_Box.H>
 #include <FL/Fl_Button.H>
+#include <FL/Fl_Check_Button.H>
+#include <FL/Fl_Check_Button.H>
 
 #include "vector"
 #include "string"
 #include "nstcommon.h"
+#include "config.h"
 #include "fltkui_stimer.h"
 
 extern Emulator emulator;
 extern nstpaths_t nstpaths;
+extern settings_t conf;
 
+static void cb_autorun_timer(Fl_Widget *w, long) {
+	conf.autorun_timer = ((Fl_Check_Button*)w)->value();
+}
 
 // Callback to hide the time splits window and resize the main view
 static void cb_hide(Fl_Widget *w, long) {
@@ -56,11 +63,16 @@ void NstTimerSplitWindow::populate() {
 	Fl_Button *btn_save = new Fl_Button(20, this->h()-55, 50, 24, "Save");
 	btn_save->callback(cb_save_splits, 0);
 
-	Fl_Button *btn_clear = new Fl_Button((disp->w()/2), this->h()-55, 50, 24, "Clear");
+	Fl_Button *btn_clear = new Fl_Button((80), this->h()-55, 50, 24, "Clear");
 	btn_clear->callback(cb_clear, 0);
 
-	Fl_Button *btn_close = new Fl_Button(disp->w()-30, this->h()-55, 50, 24, "Hide");
+	Fl_Button *btn_close = new Fl_Button(140, this->h()-55, 50, 24, "Hide");
 	btn_close->callback(cb_hide, 0);
+
+	Fl_Check_Button *chk_autorun = new Fl_Check_Button(disp->w()-80, h()-55, 75, 25, "Auto-restart");
+	chk_autorun->value(conf.autorun_timer);
+	chk_autorun->callback(cb_autorun_timer);
+
 
 	this->end();
 }

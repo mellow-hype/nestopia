@@ -119,6 +119,7 @@ void config_file_write(const char *nstdir) {
 		fprintf(fp, "turbopulse=%d\n", conf.timing_turbopulse);
 		fprintf(fp, "\n"); // End of Section
 
+
 		// Misc
 		fprintf(fp, "[misc]\n");
 		fprintf(fp, "; 0=Auto, 1=NTSC, 2=PAL, 3=Famicom, 4=Dendy\n");
@@ -136,6 +137,7 @@ void config_file_write(const char *nstdir) {
 		fprintf(fp, "homebrew_stdout=%d\n", conf.misc_homebrew_stdout);
 		fprintf(fp, "homebrew_stderr=%d\n", conf.misc_homebrew_stderr);
 
+		fprintf(fp, "autorun_timer=%d\n", conf.autorun_timer);
 		fclose(fp);
 	}
 	else {
@@ -201,6 +203,8 @@ void config_set_default() {
 	conf.misc_homebrew_exit = -1;
 	conf.misc_homebrew_stdout = -1;
 	conf.misc_homebrew_stderr = -1;
+
+	conf.autorun_timer = true;
 }
 
 static int config_match(void* user, const char* section, const char* name, const char* value) {
@@ -252,6 +256,7 @@ static int config_match(void* user, const char* section, const char* name, const
 	else if (MATCH("timing", "ffspeed")) { pconfig->timing_ffspeed = atoi(value); }
 	else if (MATCH("timing", "turbopulse")) { pconfig->timing_turbopulse = atoi(value); }
 
+
 	// Misc
 	else if (MATCH("misc", "default_system")) { pconfig->misc_default_system = atoi(value); }
 	else if (MATCH("misc", "soft_patching")) { pconfig->misc_soft_patching = atoi(value); }
@@ -264,6 +269,7 @@ static int config_match(void* user, const char* section, const char* name, const
 	else if (MATCH("misc", "homebrew_stdout")) { pconfig->misc_homebrew_stdout = atoi(value); }
 	else if (MATCH("misc", "homebrew_stderr")) { pconfig->misc_homebrew_stderr = atoi(value); }
 
+	else if (MATCH("misc", "autorun_timer")) { pconfig->autorun_timer = atoi(value); }
 	else { return 0; }
 	return 1;
 }

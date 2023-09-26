@@ -48,6 +48,9 @@ typedef struct {
 	int timing_ffspeed;
 	int timing_turbopulse;
 
+	// Split Timer
+	bool autorun_timer;
+
 	// Misc
 	int misc_default_system;
 	bool misc_soft_patching;

@@ -688,6 +688,11 @@ void nstsdl_input_hypr_controls(SDL_Event& event) {
                 } else if (hypr[0].llayer_active) {
                     hypr[0].llayer_active = false;
                     nst_state_quickload(j);
+                    // if the timer was running when the quickload happened, don't stop it but reset the start
+                    // time so the timer 'restarts' automatically right after the load
+                    if (emulator.timer.isTimerRunning() && conf.autorun_timer) {
+                        nst_start_stimer();
+                    }
                 }
             }
         }
