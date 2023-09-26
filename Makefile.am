@@ -16,6 +16,7 @@ hyprnestopia_CPPFLAGS = \
 	$(SDL2_CFLAGS) \
 	$(FLTK_CFLAGS)
 hyprnestopia_LDADD = \
+	-lcapstone \
 	$(ZLIB_LIBS) \
 	$(LIBARCHIVE_LIBS) \
 	$(SDL2_LIBS) \

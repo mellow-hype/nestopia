@@ -29,6 +29,37 @@
 #include "NstState.hpp"
 #include "api/NstApiUser.hpp"
 
+#include <capstone/capstone.h>
+
+std::string disasm_6502(uint8_t *code, size_t len)
+{
+	csh handle;
+	cs_insn *insn;
+	size_t count;
+	std::string outstr = std::string();
+	char obuf[256] = {0};
+
+	if (cs_open(CS_ARCH_MOS65XX, CS_MODE_MOS65XX_6502, &handle) != CS_ERR_OK) {
+		fprintf(stderr, "ERROR: Failed to initialize disassembler!\n");
+		return outstr;
+	}
+
+	count = cs_disasm(handle, code, len-1, 0x1000, 0, &insn);
+	if (count > 0) {
+		size_t j;
+		for (j = 0; j < count; j++) {
+			sprintf(obuf, "0x%lx:\t%s\t\t%s\n", insn[j].address, insn[j].mnemonic,
+					insn[j].op_str);
+			outstr.append(obuf);
+			memset(obuf, 0, sizeof(obuf));
+		}
+		cs_free(insn, count);
+	} else
+		fprintf(stderr, "ERROR: Failed to disassemble given code!\n");
+	cs_close(&handle);
+	return outstr;
+}
+
 namespace Nes
 {
 	namespace Core
@@ -837,12 +868,11 @@ namespace Nes
 			return data;
 		}
 
-
 		std::string Cpu::DumpStackFrame() {
 			uint sp_b, base;
 			std::string fin = std::string();
 			char regs[16] = {0};
-			char head[8] = {0};
+			char head[16] = {0};
 
 			base = sp - 64;
 			for (int i = 0; i < 128; i++) {
@@ -859,18 +889,22 @@ namespace Nes
 			return fin;
 		}
 
+		std::string Cpu::DumpDisasm() {
+			uint8_t code[512] = {0};
+			for (int i = 0; i < sizeof(code); i++) {
+				code[i] = map.Peek8(pc+i);
+			}
+			return disasm_6502(code, sizeof(code));
+		}
+
 		std::string Cpu::DumpRegisters()
 		{
 			char regs[512] = {0};
 			sprintf(regs,
-					"pc: 0x%04x\na: 0x%04x\nx: 0x%04x\ny: 0x%04x\nsp: 0x%04x\n",
-					pc, a, x, y, sp);
+					"a:\t0x%04x\nx:\t0x%04x\ny:\t0x%04x\nsp:\t0x%04x\npc:\t0x%04x\n",
+					a, x, y, sp, pc);
 
-			char state[512] = {0};
-
-			char final_b[sizeof(state) + sizeof(regs)];
-			sprintf(final_b, "%s%s", regs, state);
-			return final_b;
+			return regs;
 		}
 
 		inline uint Cpu::FetchZpg16(const uint address) const

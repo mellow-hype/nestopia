@@ -65,6 +65,10 @@ namespace Nes
             return machine.tracker.Frame();
         }
 
+        std::string Emulator::DumpDisasm() {
+            return machine.cpu.DumpDisasm();
+        }
+
         std::string Emulator::DumpRegs() {
             return machine.cpu.DumpRegisters();
         }

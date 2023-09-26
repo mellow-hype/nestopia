@@ -863,7 +863,6 @@ void nst_emuloop() {
 			nst_input_update();
 			emulator.Execute(cNstVideo, cNstSound, cNstPads);
 		}
-        emulator.DumpRegs();
 	}
 }
 

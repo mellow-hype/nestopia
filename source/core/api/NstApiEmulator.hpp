@@ -101,6 +101,7 @@ namespace Nes
 
             std::string DumpRegs();
             std::string DumpStack();
+            std::string DumpDisasm();
 
         private:
 

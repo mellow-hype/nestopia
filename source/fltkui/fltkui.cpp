@@ -634,7 +634,9 @@ int main(int argc, char *argv[]) {
 			framefrags -= refreshrate;
 		}
 
-		for (int i = 0; i < frames; i++) { nst_emuloop(); }
+		for (int i = 0; i < frames; i++) {
+			nst_emuloop();
+		}
 		glarea->redraw();
 
 		timewin->refresh();

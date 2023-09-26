@@ -52,7 +52,9 @@ void NstDebugSplitWindow::populate() {
 void NstDebugSplitWindow::refresh() {
 	buff->text("Registers:\n=====================\n");
 	buff->append(emulator.DumpRegs().c_str());
-	buff->append("\nStack:\n=====================\n");
+	buff->append("\nStack:\n=====================");
 	buff->append(emulator.DumpStack().c_str());
+	buff->append("\n\nCode:\n=====================\n");
+	buff->append(emulator.DumpDisasm().c_str());
 	disp->redraw();
 }

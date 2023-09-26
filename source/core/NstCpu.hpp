@@ -499,6 +499,7 @@ namespace Nes
 
 			std::string DumpStackFrame();
 			std::string DumpRegisters();
+			std::string DumpDisasm();
 			uint FetchStack8(uint offset=0);
 
 			Apu& GetApu()
