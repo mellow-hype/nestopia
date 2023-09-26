@@ -81,6 +81,13 @@ the menubar under _Tools>Time Splits_ (or with `Alt-w`).
 ![split](static/splitwin2.png)
 
 
+## Debug View (WIP)
+
+A debug view panel is available in the GUI and can be opened using the menu under _Tools>Debug View_ or `Alt-D`. It shows a live view of registers, some stack memory, and disassembly (wip).
+
+![debug](static/debug.png)
+
+
 ## Reference: Controller Mapping: 8BitDo SN30Pro
 
 Controls based on the 8BitDo SN30Pro wired USB controller, which presents itself as an Xbox 360
