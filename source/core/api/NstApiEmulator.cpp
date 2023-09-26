@@ -66,7 +66,11 @@ namespace Nes
         }
 
         std::string Emulator::DumpRegs() {
-            return machine.cpu.DumpState();
+            return machine.cpu.DumpRegisters();
+        }
+
+        std::string Emulator::DumpStack() {
+            return machine.cpu.DumpStackFrame();
         }
     }
 }

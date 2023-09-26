@@ -4,7 +4,7 @@
 
 #include <FL/Fl_Text_Display.H>
 
-#define SPLIT_WIN_W 400
+#define SPLIT_WIN_W 440
 
 class SplitWindow : public Fl_Window {
 private:

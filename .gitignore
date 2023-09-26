@@ -12,6 +12,7 @@
 *.bc
 .npmignore
 source/core/database/
+.cache/
 
 # Autotools cruft
 Makefile

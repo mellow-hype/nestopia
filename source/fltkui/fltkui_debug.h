@@ -5,7 +5,7 @@
 #include <FL/Fl_Text_Display.H>
 #include "fltkui_stimer.h"
 
-#define SPLIT_WIN_W 400
+// #define SPLIT_WIN_W 440
 
 class NstDebugSplitWindow : public SplitWindow {
 private:

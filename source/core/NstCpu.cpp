@@ -831,6 +831,48 @@ namespace Nes
 			return 0xFF;
 		}
 
+		inline uint Cpu::FetchStack8(uint offset)
+		{
+			const uint data = ram.mem[0x100+offset];
+			return data;
+		}
+
+
+		std::string Cpu::DumpStackFrame() {
+			uint sp_b, base;
+			std::string fin = std::string();
+			char regs[16] = {0};
+			char head[8] = {0};
+
+			base = sp - 64;
+			for (int i = 0; i < 128; i++) {
+				memset(regs, 0, sizeof(regs));
+				if (i % 16 == 0) {
+					sprintf(head, "\n%04x: ", 0x100 + base + i);
+					fin.append(head);
+					memset(head, 0, sizeof(head));
+				}
+				sp_b = FetchStack8(base + i);
+				sprintf(regs, "%02x ", sp_b);
+				fin.append(regs);
+			}
+			return fin;
+		}
+
+		std::string Cpu::DumpRegisters()
+		{
+			char regs[512] = {0};
+			sprintf(regs,
+					"pc: 0x%04x\na: 0x%04x\nx: 0x%04x\ny: 0x%04x\nsp: 0x%04x\n",
+					pc, a, x, y, sp);
+
+			char state[512] = {0};
+
+			char final_b[sizeof(state) + sizeof(regs)];
+			sprintf(final_b, "%s%s", regs, state);
+			return final_b;
+		}
+
 		inline uint Cpu::FetchZpg16(const uint address) const
 		{
 			return ram.mem[address & 0xFF] | uint(ram.mem[(address+1) & 0xFF]) << 8;

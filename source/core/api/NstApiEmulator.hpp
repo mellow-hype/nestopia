@@ -100,6 +100,7 @@ namespace Nes
             ulong Frame() const throw();
 
             std::string DumpRegs();
+            std::string DumpStack();
 
         private:
 

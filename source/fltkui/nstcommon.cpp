@@ -799,7 +799,6 @@ void nst_state_quicksave(int slot) {
     if (!loaded) { return; }
     char msg[256] = {0};
     sprintf(msg, "QuickSAVE slot%d", slot);
-    fprintf(stderr, "%s\n", msg);
 
     char slotpath[520];
     snprintf(slotpath, sizeof(slotpath), "%s_%d.nst", nstpaths.statepath, slot);
@@ -822,10 +821,8 @@ void nst_state_quickload(int slot) {
     }
     char msg[256] = {0};
     sprintf(msg, "QuickLOAD slot%d", slot);
-    fprintf(stderr, "%s\n", msg);
 
     nst_state_load(slotpath);
-
     nst_video_print(msg, 8, 212, 2, true);
 }
 

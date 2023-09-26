@@ -38,6 +38,7 @@ void NstDebugSplitWindow::reset() {
 void NstDebugSplitWindow::populate() {
 	buff = new Fl_Text_Buffer();
 	disp = new Fl_Text_Display(20, 20, w()-25, h()-80, "Debug");
+	disp->textfont(FL_COURIER);
 	disp->labelfont(FL_BOLD);
 	disp->labelsize(14);
 	disp->buffer(buff);
@@ -51,5 +52,7 @@ void NstDebugSplitWindow::populate() {
 void NstDebugSplitWindow::refresh() {
 	buff->text("Registers:\n=====================\n");
 	buff->append(emulator.DumpRegs().c_str());
+	buff->append("\nStack:\n=====================\n");
+	buff->append(emulator.DumpStack().c_str());
 	disp->redraw();
 }
