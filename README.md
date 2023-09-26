@@ -3,9 +3,19 @@
 This summarizes the customizations that have been made to the 0ldsk00l fork of Nestopia tha this fork originates
 from.
 
+## Additional Dependencies
+
+Capstone disassembly library:
+
+```
+git clone https://github.com/capstone-engine/capstone.git
+cd capstone
+./make.sh
+sudo make install
+```
+
 ## TODO
 
-- [x] find a good way to display more split times on-screen
 - [ ] write split times from current session to file at close/unload/reset
 - [ ] expand config options reachable via GUI
 - [ ] more user-friendly key-remapping interface for custom features
