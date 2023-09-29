@@ -44,7 +44,7 @@ std::string disasm_6502(uint8_t *code, size_t len)
 		return outstr;
 	}
 
-	count = cs_disasm(handle, code, len-1, 0x1000, 0, &insn);
+	count = cs_disasm(handle, code, len, 0x8000, 0, &insn);
 	if (count > 0) {
 		size_t j;
 		for (j = 0; j < count; j++) {
@@ -890,9 +890,10 @@ namespace Nes
 		}
 
 		std::string Cpu::DumpDisasm() {
-			uint8_t code[512] = {0};
+			uint8_t code[2048] = {0};
 			for (int i = 0; i < sizeof(code); i++) {
-				code[i] = map.Peek8(pc+i);
+				code[i] = map.Peek16(pc+i);
+				// printf("fetched hex 0x%02x from pc:0x%x offset %u\n", code[i], pc, i);
 			}
 			return disasm_6502(code, sizeof(code));
 		}
