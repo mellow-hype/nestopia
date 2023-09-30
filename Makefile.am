@@ -8,7 +8,7 @@ EXTRA_DIST = doc
 hyprnestopia_CPPFLAGS = \
 	-I$(top_srcdir)/source \
 	-I$(top_srcdir)/source/fltkui \
-	-DNST_DATADIR=\"$(datadir)/nestopia\" \
+	-DNST_DATADIR=\"$(datadir)/hyprnestopia\" \
 	-DNST_DATAROOTDIR=\"$(datarootdir)\" \
 	-DNST_PRAGMA_ONCE \
 	$(ZLIB_CFLAGS) \
@@ -26,30 +26,30 @@ hyprnestopia_LDADD = \
 # Installation #
 ################
 # program-specific files
-databasedir = $(datadir)/nestopia
+databasedir = $(datadir)/hyprnestopia
 dist_database_DATA = NstDatabase.xml
 
 # freedesktop.org-specific files
 desktopdir = $(datarootdir)/applications
-dist_desktop_DATA = icons/nestopia.desktop
+dist_desktop_DATA = icons/hyprnestopia.desktop
 
 icon32dir = $(datarootdir)/icons/hicolor/32x32/apps
-dist_icon32_DATA = icons/32/nestopia.png
+dist_icon32_DATA = icons/32/hyprnestopia.png
 
 icon48dir = $(datarootdir)/icons/hicolor/48x48/apps
-dist_icon48_DATA = icons/48/nestopia.png
+dist_icon48_DATA = icons/48/hyprnestopia.png
 
 icon64dir = $(datarootdir)/icons/hicolor/64x64/apps
-dist_icon64_DATA = icons/64/nestopia.png
+dist_icon64_DATA = icons/64/hyprnestopia.png
 
 icon96dir = $(datarootdir)/icons/hicolor/96x96/apps
-dist_icon96_DATA = icons/96/nestopia.png
+dist_icon96_DATA = icons/96/hyprnestopia.png
 
 icon128dir = $(datarootdir)/icons/hicolor/128x128/apps
-dist_icon128_DATA = icons/128/nestopia.png
+dist_icon128_DATA = icons/128/hyprnestopia.png
 
 iconsvgdir = $(datarootdir)/icons/hicolor/scalable/apps
-dist_iconsvg_DATA = icons/svg/nestopia.svg icons/svg/nespad.svg
+dist_iconsvg_DATA = icons/svg/hyprnestopia.svg icons/svg/nespad.svg
 
 # documentation
 dist_doc_DATA = ChangeLog README.md
